@@ -1,0 +1,32 @@
+{
+  "displayName": "VR Builder - VIRTOSHA Project",
+  "name": "co.mindport.vrbuilder.virtosha",
+  "version": "1.0.0",
+  "unity": "2021.1",
+  "description": "Add-on for VR Builder containing features developed for the VIRTOSHA project.",
+  "dependencies": {
+    "co.mindport.vrbuilder.core": "4.0.0"    
+ },
+  "keywords": [
+    "mindport",
+    "unity",
+    "vr builder",
+    "vr",
+    "ar",
+    "xr",
+    "virtual reality",
+    "augmented reality",
+    "extended reality",
+    "metaverse",
+    "training",
+    "prototyping",
+    "visual scripting",
+    "medical",
+    "drilling"
+  ],
+  "author": {
+    "name": "MindPort",
+    "email": "contact@mindport.co",
+    "url" : "https://mindport.co/"
+  }
+}
