@@ -1,17 +1,15 @@
+using UnityEngine;
 using VRBuilder.Core.Properties;
-using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
     /// <summary>
     /// Property for a scene object that represents a drillable hole.
     /// </summary>
-    public interface IDrillableSocketProperty : ISceneObjectProperty, ILockable
+    public interface IDrillableSocketProperty : ISceneObjectProperty
     {
-        void SetHoleProperties(float depth, float width);
-
-        float DrilledDepth { get; }
-
-        float DrilledWidth { get; }
+        public float Width { get; }
+        public Vector3 Start { get; }
+        public Vector3 End { get; }
     }
 }

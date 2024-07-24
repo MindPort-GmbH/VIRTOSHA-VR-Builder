@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Utils;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
@@ -23,6 +24,7 @@ namespace VRBuilder.VIRTOSHA.Properties
 
         private void Awake()
         {
+            holes.Add(new Hole(new Vector3(0, .5f, 0), new Vector3(0, 0, 0), 0.1f));
         }
 
         private void OnDrawGizmos()
@@ -34,41 +36,8 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             foreach (Hole hole in holes)
             {
-                DrawCylinderGizmo(transform.TransformPoint(hole.Start), transform.TransformPoint(hole.End), hole.Width);
+                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.Start), transform.TransformPoint(hole.End), hole.Width, Color.red);
             }
-        }
-
-        private void DrawCylinderGizmo(Vector3 startPoint, Vector3 endPoint, float width)
-        {
-            Gizmos.color = Color.red;
-
-            // Calculate cylinder direction and length
-            Vector3 direction = endPoint - startPoint;
-            float length = direction.magnitude;
-            Vector3 directionNormalized = direction.normalized;
-
-            // Calculate rotation
-            Quaternion rotation = Quaternion.FromToRotation(Vector3.up, directionNormalized);
-            Vector3 midPoint = (startPoint + endPoint) / 2;
-
-            // Scale the cylinder to match the specified length and radius
-            Matrix4x4 oldMatrix = Gizmos.matrix;
-            Gizmos.matrix = Matrix4x4.TRS(midPoint, rotation, new Vector3(width, length / 2, width));
-
-            // Draw the cylinder
-            Gizmos.DrawWireMesh(GetCylinderMesh());
-
-            // Reset the Gizmos matrix
-            Gizmos.matrix = oldMatrix;
-        }
-
-        private Mesh GetCylinderMesh()
-        {
-            // Generate or get a cylinder mesh
-            GameObject tempCylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            Mesh cylinderMesh = tempCylinder.GetComponent<MeshFilter>().sharedMesh;
-            DestroyImmediate(tempCylinder);
-            return cylinderMesh;
         }
     }
 }
