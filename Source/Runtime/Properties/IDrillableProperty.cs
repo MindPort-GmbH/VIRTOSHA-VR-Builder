@@ -10,5 +10,7 @@ namespace VRBuilder.VIRTOSHA.Properties
     public interface IDrillableProperty : ISceneObjectProperty, ILockable
     {
         void CreateHole(Vector3 startPosition, Vector3 endPosition, float width);
+
+        bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance);
     }
 }

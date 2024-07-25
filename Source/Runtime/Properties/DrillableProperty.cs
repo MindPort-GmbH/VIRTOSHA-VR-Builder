@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Utils;
@@ -17,9 +18,17 @@ namespace VRBuilder.VIRTOSHA.Properties
             holes.Add(new Hole(startPosition, endPosition, width));
         }
 
+        public bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance)
+        {
+            return holes.Any(hole =>
+            Vector3.Distance(transform.TransformPoint(hole.Start), startPosition) <= startTolerance &&
+            Vector3.Distance(transform.TransformPoint(hole.End), endPosition) <= endTolerance &&
+            hole.Width - width <= widthTolerance
+            );
+        }
+
         protected override void InternalSetLocked(bool lockState)
         {
-            throw new System.NotImplementedException();
         }
 
         private void Awake()
