@@ -15,6 +15,7 @@ namespace VRBuilder.VIRTOSHA
         Vector3 drillDirection;
         float drillDistance = 0f;
         float holeWidth = 0.05f;
+        float maxDeviation = 0.05f;
         bool isDrilling;
 
         private void OnEnable()
@@ -31,6 +32,9 @@ namespace VRBuilder.VIRTOSHA
 
             usableProperty.UseStarted.AddListener(OnUseStarted);
             usableProperty.UseEnded.AddListener(OnUseEnded);
+
+            //DEBUG
+            OnUseStarted(new UsablePropertyEventArgs());
         }
 
         private void OnDisable()
@@ -67,8 +71,13 @@ namespace VRBuilder.VIRTOSHA
                 return;
             }
 
-            isDrilling = false;
             drillTip.TouchedDrillableObject -= OnTouchedDrillableObject;
+            StopDrilling();
+        }
+
+        private void StopDrilling()
+        {
+            isDrilling = false;
 
             if (currentDrilledObject != null)
             {
@@ -88,6 +97,11 @@ namespace VRBuilder.VIRTOSHA
                 return;
             }
 
+            if (CalculateDeviation(drillStartPosition, drillDirection, drillTip.transform.position) > maxDeviation)
+            {
+                StopDrilling();
+            }
+
             drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillTip.transform.position));
         }
 
@@ -100,6 +114,28 @@ namespace VRBuilder.VIRTOSHA
 
             Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
             DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, holeWidth, Color.red);
+        }
+
+        public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition)
+        {
+            direction.Normalize();
+            Vector3 originToCurrent = currentPosition - origin;
+            float projectionLength = Vector3.Dot(originToCurrent, direction);
+            Vector3 closestPointOnRay;
+
+            if (projectionLength < 0)
+            {
+                // If the closest point is the origin, it means we're behind the drilled hole - stop drilling immediately.
+                return float.MaxValue;
+            }
+            else
+            {
+                closestPointOnRay = origin + projectionLength * direction;
+            }
+
+            float distance = Vector3.Distance(currentPosition, closestPointOnRay);
+
+            return distance;
         }
     }
 }
