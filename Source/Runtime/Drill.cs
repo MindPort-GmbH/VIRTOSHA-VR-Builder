@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using VRBuilder.BasicInteraction.Properties;
 using VRBuilder.Core.Utils;
@@ -57,9 +58,31 @@ namespace VRBuilder.VIRTOSHA
             }
 
             currentDrilledObject = e.DrillableProperty;
-            drillStartPosition = drillTip.transform.position;
+            drillStartPosition = GetClosestPointOnCollider(drillTip.transform.position, e.DrillableProperty.SceneObject.GameObject);
             drillDirection = (drillTip.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
+        }
+
+        private Vector3 GetClosestPointOnCollider(Vector3 position, GameObject gameObject)
+        {
+            Vector3[] closestPoints = gameObject.GetComponentsInChildren<Collider>().Select(collider => collider.ClosestPoint(position)).ToArray();
+
+            Vector3 closestPoint = closestPoints.First();
+            float currentDistance = Vector3.Distance(position, closestPoint);
+
+            for (int i = 0; i < closestPoints.Length; i++)
+            {
+                float distance = Vector3.Distance(position, closestPoints[i]);
+                if (distance < currentDistance)
+                {
+                    closestPoint = closestPoints[i];
+                    currentDistance = distance;
+                }
+            }
+
+            Debug.DrawLine(position, closestPoint, UnityEngine.Color.red, 5.0f);
+
+            return closestPoint;
         }
 
         private void OnUseEnded(UsablePropertyEventArgs args)
@@ -113,7 +136,7 @@ namespace VRBuilder.VIRTOSHA
             }
 
             Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
-            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, holeWidth, Color.red);
+            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, holeWidth, UnityEngine.Color.red);
         }
 
         public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition)
