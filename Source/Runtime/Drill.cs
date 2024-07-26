@@ -10,11 +10,12 @@ namespace VRBuilder.VIRTOSHA
     {
         DrillTip drillTip;
         IUsableProperty usableProperty;
-        IDrillableProperty currentDrilledObject;
+        IDrillableProperty currentDrilledObject = null;
         Vector3 drillStartPosition;
         Vector3 drillDirection;
         float drillDistance = 0f;
         float holeWidth = 0.05f;
+        bool isDrilling;
 
         private void OnEnable()
         {
@@ -40,8 +41,8 @@ namespace VRBuilder.VIRTOSHA
 
         private void OnUseStarted(UsablePropertyEventArgs arg0)
         {
-            drillTip.IsDrilling = true;
             drillTip.TouchedDrillableObject += OnTouchedDrillableObject;
+            drillTip.IsUsing = true;
         }
 
         private void OnTouchedDrillableObject(object sender, DrillTipEventArgs e)
@@ -54,16 +55,19 @@ namespace VRBuilder.VIRTOSHA
             currentDrilledObject = e.DrillableProperty;
             drillStartPosition = drillTip.transform.position;
             drillDirection = (drillTip.transform.rotation * Vector3.forward).normalized;
+            isDrilling = true;
         }
 
         private void OnUseEnded(UsablePropertyEventArgs args)
         {
-            if (drillTip.IsDrilling == false)
+            drillTip.IsUsing = false;
+
+            if (isDrilling == false)
             {
                 return;
             }
 
-            drillTip.IsDrilling = false;
+            isDrilling = false;
             drillTip.TouchedDrillableObject -= OnTouchedDrillableObject;
 
             if (currentDrilledObject != null)
@@ -79,7 +83,7 @@ namespace VRBuilder.VIRTOSHA
 
         private void Update()
         {
-            if (drillTip.IsDrilling == false)
+            if (isDrilling == false)
             {
                 return;
             }
@@ -89,7 +93,7 @@ namespace VRBuilder.VIRTOSHA
 
         private void OnDrawGizmos()
         {
-            if (drillTip == null || drillTip.IsDrilling == false)
+            if (drillTip == null || isDrilling == false)
             {
                 return;
             }

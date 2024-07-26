@@ -7,11 +7,11 @@ namespace VRBuilder.VIRTOSHA
     public class DrillTip : MonoBehaviour
     {
         public event EventHandler<DrillTipEventArgs> TouchedDrillableObject;
-        public bool IsDrilling { get; set; }
+        public bool IsUsing { get; set; }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (IsDrilling == false)
+            if (IsUsing == false)
             {
                 return;
             }
