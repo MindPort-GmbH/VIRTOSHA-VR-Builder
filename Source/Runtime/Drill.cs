@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using VRBuilder.BasicInteraction.Properties;
 using VRBuilder.Core.Utils;
@@ -58,29 +57,28 @@ namespace VRBuilder.VIRTOSHA
             }
 
             currentDrilledObject = e.DrillableProperty;
-            drillStartPosition = GetClosestPointOnCollider(drillTip.transform.position, e.DrillableProperty.SceneObject.GameObject);
+            drillStartPosition = GetClosestPointOnCollider(drillTip.transform.position, e.OtherCollider);
             drillDirection = (drillTip.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
         }
 
-        private Vector3 GetClosestPointOnCollider(Vector3 position, GameObject gameObject)
+        private Vector3 GetClosestPointOnCollider(Vector3 position, Collider otherCollider)
         {
-            Vector3[] closestPoints = gameObject.GetComponentsInChildren<Collider>().Select(collider => collider.ClosestPoint(position)).ToArray();
+            Vector3 closestPoint = otherCollider.ClosestPoint(position);
 
-            Vector3 closestPoint = closestPoints.First();
-            float currentDistance = Vector3.Distance(position, closestPoint);
-
-            for (int i = 0; i < closestPoints.Length; i++)
+            if (closestPoint == position)
             {
-                float distance = Vector3.Distance(position, closestPoints[i]);
-                if (distance < currentDistance)
+                Vector3 direction;
+                float distance;
+
+                if (Physics.ComputePenetration(
+                    otherCollider, gameObject.transform.position, gameObject.transform.rotation,
+                    drillTip.GetComponent<Collider>(), position, drillTip.transform.rotation,
+                    out direction, out distance))
                 {
-                    closestPoint = closestPoints[i];
-                    currentDistance = distance;
+                    return position + direction * distance;
                 }
             }
-
-            Debug.DrawLine(position, closestPoint, UnityEngine.Color.red, 5.0f);
 
             return closestPoint;
         }

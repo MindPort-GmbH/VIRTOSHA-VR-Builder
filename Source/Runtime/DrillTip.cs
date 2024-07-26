@@ -20,7 +20,7 @@ namespace VRBuilder.VIRTOSHA
 
             if (drillableProperty != null)
             {
-                TouchedDrillableObject?.Invoke(this, new DrillTipEventArgs(drillableProperty));
+                TouchedDrillableObject?.Invoke(this, new DrillTipEventArgs(drillableProperty, other));
             }
         }
     }
@@ -28,10 +28,12 @@ namespace VRBuilder.VIRTOSHA
     public class DrillTipEventArgs : EventArgs
     {
         public readonly IDrillableProperty DrillableProperty;
+        public readonly Collider OtherCollider;
 
-        public DrillTipEventArgs(IDrillableProperty drillableProperty)
+        public DrillTipEventArgs(IDrillableProperty drillableProperty, Collider otherCollider)
         {
             DrillableProperty = drillableProperty;
+            OtherCollider = otherCollider;
         }
     }
 }
