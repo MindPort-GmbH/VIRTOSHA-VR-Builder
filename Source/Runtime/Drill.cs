@@ -1,5 +1,6 @@
 using UnityEngine;
 using VRBuilder.BasicInteraction.Properties;
+using VRBuilder.Core.Utils;
 using VRBuilder.VIRTOSHA.Properties;
 
 namespace VRBuilder.VIRTOSHA
@@ -11,7 +12,9 @@ namespace VRBuilder.VIRTOSHA
         IUsableProperty usableProperty;
         IDrillableProperty currentDrilledObject;
         Vector3 drillStartPosition;
-        Vector3 drillEndPosition;
+        Vector3 drillDirection;
+        float drillDistance = 0f;
+        float holeWidth = 0.05f;
 
         private void OnEnable()
         {
@@ -50,21 +53,49 @@ namespace VRBuilder.VIRTOSHA
 
             currentDrilledObject = e.DrillableProperty;
             drillStartPosition = drillTip.transform.position;
+            drillDirection = (drillTip.transform.rotation * Vector3.forward).normalized;
         }
 
         private void OnUseEnded(UsablePropertyEventArgs args)
         {
+            if (drillTip.IsDrilling == false)
+            {
+                return;
+            }
+
             drillTip.IsDrilling = false;
             drillTip.TouchedDrillableObject -= OnTouchedDrillableObject;
 
             if (currentDrilledObject != null)
             {
-                // Get final position
+                Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
 
-                // Create hole in object
+                currentDrilledObject.CreateHole(drillStartPosition, drillEndPosition, holeWidth);
 
                 currentDrilledObject = null;
+                drillDistance = 0f;
             }
+        }
+
+        private void Update()
+        {
+            if (drillTip.IsDrilling == false)
+            {
+                return;
+            }
+
+            drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillTip.transform.position));
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (drillTip == null || drillTip.IsDrilling == false)
+            {
+                return;
+            }
+
+            Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
+            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, holeWidth, Color.red);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             foreach (Hole hole in holes)
             {
-                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.Start), transform.TransformPoint(hole.End), hole.Width, Color.red);
+                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.Start), transform.TransformPoint(hole.End), hole.Width, Color.green);
             }
         }
     }
