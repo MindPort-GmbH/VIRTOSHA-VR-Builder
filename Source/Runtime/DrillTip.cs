@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using VRBuilder.VIRTOSHA.Properties;
 
@@ -6,12 +5,16 @@ namespace VRBuilder.VIRTOSHA
 {
     public class DrillTip : MonoBehaviour
     {
-        public event EventHandler<DrillTipEventArgs> TouchedDrillableObject;
-        public bool IsUsing { get; set; }
+        private DrillBit parentDrillBit;
+
+        public void Init(DrillBit parent)
+        {
+            parentDrillBit = parent;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (IsUsing == false)
+            if (parentDrillBit.IsUsing == false)
             {
                 return;
             }
@@ -20,20 +23,8 @@ namespace VRBuilder.VIRTOSHA
 
             if (drillableProperty != null)
             {
-                TouchedDrillableObject?.Invoke(this, new DrillTipEventArgs(drillableProperty, other));
+                parentDrillBit.EmitTouchedDrillableObject(drillableProperty, other);
             }
-        }
-    }
-
-    public class DrillTipEventArgs : EventArgs
-    {
-        public readonly IDrillableProperty DrillableProperty;
-        public readonly Collider OtherCollider;
-
-        public DrillTipEventArgs(IDrillableProperty drillableProperty, Collider otherCollider)
-        {
-            DrillableProperty = drillableProperty;
-            OtherCollider = otherCollider;
         }
     }
 }

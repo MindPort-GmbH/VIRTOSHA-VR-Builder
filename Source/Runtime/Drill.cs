@@ -8,21 +8,20 @@ namespace VRBuilder.VIRTOSHA
     [RequireComponent(typeof(IUsableProperty))]
     public class Drill : MonoBehaviour
     {
-        DrillTip drillTip;
+        DrillBit drillBit;
         IUsableProperty usableProperty;
         IDrillableProperty currentDrilledObject = null;
         Vector3 drillStartPosition;
         Vector3 drillDirection;
         float drillDistance = 0f;
-        float holeWidth = 0.05f;
         float maxDeviation = 0.05f;
         bool isDrilling;
 
         private void OnEnable()
         {
-            if (drillTip == null)
+            if (drillBit == null)
             {
-                drillTip = GetComponentInChildren<DrillTip>();
+                drillBit = GetComponentInChildren<DrillBit>();
             }
 
             if (usableProperty == null)
@@ -45,11 +44,11 @@ namespace VRBuilder.VIRTOSHA
 
         private void OnUseStarted(UsablePropertyEventArgs arg0)
         {
-            drillTip.TouchedDrillableObject += OnTouchedDrillableObject;
-            drillTip.IsUsing = true;
+            drillBit.TouchedDrillableObject += OnTouchedDrillableObject;
+            drillBit.IsUsing = true;
         }
 
-        private void OnTouchedDrillableObject(object sender, DrillTipEventArgs e)
+        private void OnTouchedDrillableObject(object sender, DrillBitEventArgs e)
         {
             if (currentDrilledObject != null)
             {
@@ -57,8 +56,8 @@ namespace VRBuilder.VIRTOSHA
             }
 
             currentDrilledObject = e.DrillableProperty;
-            drillStartPosition = GetClosestPointOnCollider(drillTip.transform.position, e.OtherCollider);
-            drillDirection = (drillTip.transform.rotation * Vector3.forward).normalized;
+            drillStartPosition = GetClosestPointOnCollider(drillBit.Base.position, e.OtherCollider);
+            drillDirection = (drillBit.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
         }
 
@@ -66,33 +65,33 @@ namespace VRBuilder.VIRTOSHA
         {
             Vector3 closestPoint = otherCollider.ClosestPoint(position);
 
-            if (closestPoint == position)
-            {
-                Vector3 direction;
-                float distance;
+            //if (closestPoint == position)
+            //{
+            //    Vector3 direction;
+            //    float distance;
 
-                if (Physics.ComputePenetration(
-                    otherCollider, gameObject.transform.position, gameObject.transform.rotation,
-                    drillTip.GetComponent<Collider>(), position, drillTip.transform.rotation,
-                    out direction, out distance))
-                {
-                    return position + direction * distance;
-                }
-            }
+            //    if (Physics.ComputePenetration(
+            //        otherCollider, gameObject.transform.position, gameObject.transform.rotation,
+            //        drillBit.GetComponent<Collider>(), position, drillBit.transform.rotation,
+            //        out direction, out distance))
+            //    {
+            //        return position + direction * distance;
+            //    }
+            //}
 
             return closestPoint;
         }
 
         private void OnUseEnded(UsablePropertyEventArgs args)
         {
-            drillTip.IsUsing = false;
+            drillBit.IsUsing = false;
 
             if (isDrilling == false)
             {
                 return;
             }
 
-            drillTip.TouchedDrillableObject -= OnTouchedDrillableObject;
+            drillBit.TouchedDrillableObject -= OnTouchedDrillableObject;
             StopDrilling();
         }
 
@@ -104,7 +103,7 @@ namespace VRBuilder.VIRTOSHA
             {
                 Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
 
-                currentDrilledObject.CreateHole(drillStartPosition, drillEndPosition, holeWidth);
+                currentDrilledObject.CreateHole(drillStartPosition, drillEndPosition, drillBit.Width);
 
                 currentDrilledObject = null;
                 drillDistance = 0f;
@@ -118,23 +117,23 @@ namespace VRBuilder.VIRTOSHA
                 return;
             }
 
-            if (CalculateDeviation(drillStartPosition, drillDirection, drillTip.transform.position) > maxDeviation)
+            if (CalculateDeviation(drillStartPosition, drillDirection, drillBit.Tip.position) > maxDeviation)
             {
                 StopDrilling();
             }
 
-            drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillTip.transform.position));
+            drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
         }
 
         private void OnDrawGizmos()
         {
-            if (drillTip == null || isDrilling == false)
+            if (drillBit == null || isDrilling == false)
             {
                 return;
             }
 
             Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
-            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, holeWidth, UnityEngine.Color.red);
+            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, UnityEngine.Color.red);
         }
 
         public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition)
