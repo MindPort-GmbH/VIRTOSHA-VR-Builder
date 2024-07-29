@@ -104,13 +104,17 @@ namespace VRBuilder.VIRTOSHA
                 return;
             }
 
-            if (CalculateDeviation(drillStartPosition, drillDirection, drillBit.Tip.position) > maxDeviation)
+            float projectionLength;
+            if (CalculateDeviation(drillStartPosition, drillDirection, drillBit.Tip.position, out projectionLength) > maxDeviation)
             {
                 StopDrilling();
                 return;
             }
 
-            drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
+            if (projectionLength > 0)
+            {
+                drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
+            }
         }
 
         private void OnDrawGizmos()
@@ -124,11 +128,11 @@ namespace VRBuilder.VIRTOSHA
             DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, UnityEngine.Color.red);
         }
 
-        public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition)
+        public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition, out float projectionLength)
         {
             direction.Normalize();
             Vector3 originToCurrent = currentPosition - origin;
-            float projectionLength = Vector3.Dot(originToCurrent, direction);
+            projectionLength = Vector3.Dot(originToCurrent, direction);
             Vector3 closestPointOnRay = origin + projectionLength * direction;
             float distance;
 
