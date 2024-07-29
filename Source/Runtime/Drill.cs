@@ -65,20 +65,6 @@ namespace VRBuilder.VIRTOSHA
         {
             Vector3 closestPoint = otherCollider.ClosestPoint(position);
 
-            //if (closestPoint == position)
-            //{
-            //    Vector3 direction;
-            //    float distance;
-
-            //    if (Physics.ComputePenetration(
-            //        otherCollider, gameObject.transform.position, gameObject.transform.rotation,
-            //        drillBit.GetComponent<Collider>(), position, drillBit.transform.rotation,
-            //        out direction, out distance))
-            //    {
-            //        return position + direction * distance;
-            //    }
-            //}
-
             return closestPoint;
         }
 
@@ -92,6 +78,7 @@ namespace VRBuilder.VIRTOSHA
             }
 
             drillBit.TouchedDrillableObject -= OnTouchedDrillableObject;
+
             StopDrilling();
         }
 
@@ -120,6 +107,7 @@ namespace VRBuilder.VIRTOSHA
             if (CalculateDeviation(drillStartPosition, drillDirection, drillBit.Tip.position) > maxDeviation)
             {
                 StopDrilling();
+                return;
             }
 
             drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
@@ -141,19 +129,18 @@ namespace VRBuilder.VIRTOSHA
             direction.Normalize();
             Vector3 originToCurrent = currentPosition - origin;
             float projectionLength = Vector3.Dot(originToCurrent, direction);
-            Vector3 closestPointOnRay;
+            Vector3 closestPointOnRay = origin + projectionLength * direction;
+            float distance;
 
             if (projectionLength < 0)
             {
                 // If the closest point is the origin, it means we're behind the drilled hole - stop drilling immediately.
-                return float.MaxValue;
+                distance = Vector3.Distance(currentPosition, origin);
             }
             else
             {
-                closestPointOnRay = origin + projectionLength * direction;
+                distance = Vector3.Distance(currentPosition, closestPointOnRay);
             }
-
-            float distance = Vector3.Distance(currentPosition, closestPointOnRay);
 
             return distance;
         }
