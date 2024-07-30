@@ -127,7 +127,7 @@ namespace VRBuilder.VIRTOSHA.Tests.Conditions
             // Given a drill holes condition,
             IDrillableProperty drillableProperty = CreateDrillableObject();
             IDrillableSocketProperty drillableSocket = CreateDrillableSocket();
-            drillableSocket.Configure(expected, 0.05f, 0.05f);
+            drillableSocket.Configure(expected, placeEnterPointOnSurface: false);
             DrillHolesCondition condition = new DrillHolesCondition();
             condition.Data.DrillableSockets = new MultipleScenePropertyReference<IDrillableSocketProperty>(drillableSocket.SceneObject.Guid);
             condition.Data.DrillableObject = new SingleScenePropertyReference<IDrillableProperty>(drillableProperty.SceneObject.Guid);
