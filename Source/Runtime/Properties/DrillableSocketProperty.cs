@@ -98,7 +98,7 @@ namespace VRBuilder.VIRTOSHA.Properties
 
         private void OnDrawGizmos()
         {
-            DebugUtils.DrawCylinderGizmo(transform.position, EndPoint, Width, Color.cyan);
+            DebugUtils.DrawWireCylinderGizmo(transform.position, EndPoint, Width, Color.cyan);
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(EnterPoint, EnterTolerance);
             Gizmos.DrawWireSphere(EndPoint, EndTolerance);

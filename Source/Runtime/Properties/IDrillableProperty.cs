@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.VIRTOSHA.Structs;
@@ -10,6 +12,11 @@ namespace VRBuilder.VIRTOSHA.Properties
     /// </summary>
     public interface IDrillableProperty : ISceneObjectProperty, ILockable
     {
+        /// <summary>
+        /// Called when a new hole is added to this property.
+        /// </summary>
+        UnityEvent<DrillablePropertyEventArgs> HoleCreated { get; }
+
         /// <summary>
         /// Creates a hole with the specified characteristic in the object.
         /// </summary>
@@ -29,5 +36,9 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// Creates a hole with the specified characteristic in the object.
         /// </summary>
         bool HasHole(Hole hole, float enterTolerance, float endTolerance, float widthTolerance);
+    }
+
+    public class DrillablePropertyEventArgs : EventArgs
+    {
     }
 }

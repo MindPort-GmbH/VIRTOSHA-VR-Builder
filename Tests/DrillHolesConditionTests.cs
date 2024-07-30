@@ -119,5 +119,35 @@ namespace VRBuilder.VIRTOSHA.Tests.Conditions
             GameObject.DestroyImmediate(drillableProperty.SceneObject.GameObject);
             GameObject.DestroyImmediate(drillableSocket.SceneObject.GameObject);
         }
+
+        [UnityTest]
+        [TestCaseSource("completeConditionTestCases")]
+        public IEnumerator HolesCreatedOnAutocomplete(Hole expected, Hole actual)
+        {
+            // Given a drill holes condition,
+            IDrillableProperty drillableProperty = CreateDrillableObject();
+            IDrillableSocketProperty drillableSocket = CreateDrillableSocket();
+            drillableSocket.Configure(expected, 0.05f, 0.05f);
+            DrillHolesCondition condition = new DrillHolesCondition();
+            condition.Data.DrillableSockets = new MultipleScenePropertyReference<IDrillableSocketProperty>(drillableSocket.SceneObject.Guid);
+            condition.Data.DrillableObject = new SingleScenePropertyReference<IDrillableProperty>(drillableProperty.SceneObject.Guid);
+
+            // When it is fastforwarded,
+            condition.LifeCycle.Activate();
+            while (condition.LifeCycle.Stage != Core.Stage.Active)
+            {
+                yield return null;
+                condition.Update();
+            }
+
+            condition.Autocomplete();
+
+            // Then the specified holes are created.
+            Assert.IsTrue(drillableProperty.HasHole(expected, 0.001f, 0.001f, 0.001f));
+
+            // Cleanup
+            GameObject.DestroyImmediate(drillableProperty.SceneObject.GameObject);
+            GameObject.DestroyImmediate(drillableSocket.SceneObject.GameObject);
+        }
     }
 }

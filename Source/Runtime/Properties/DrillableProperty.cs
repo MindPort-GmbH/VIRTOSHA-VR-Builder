@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Utils;
 using VRBuilder.VIRTOSHA.Structs;
@@ -14,6 +15,12 @@ namespace VRBuilder.VIRTOSHA.Properties
         [SerializeField]
         [Tooltip("If selected, holes in the object will be displayed as gizmos in the editor window.")]
         private bool debugDisplayHoles;
+
+        [Header("Events")]
+        [SerializeField]
+        private UnityEvent<DrillablePropertyEventArgs> holeCreated = new UnityEvent<DrillablePropertyEventArgs>();
+
+        public UnityEvent<DrillablePropertyEventArgs> HoleCreated => holeCreated;
 
         /// <inheritdoc/>       
         public void CreateHole(Vector3 enterPosition, Vector3 endPosition, float width)
@@ -31,10 +38,10 @@ namespace VRBuilder.VIRTOSHA.Properties
         }
 
         /// <inheritdoc/>       
-        public bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance)
+        public bool HasHole(Vector3 enterPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance)
         {
             return holes.Any(hole =>
-            Vector3.Distance(transform.TransformPoint(hole.EnterPoint), startPosition) <= startTolerance &&
+            Vector3.Distance(transform.TransformPoint(hole.EnterPoint), enterPosition) <= startTolerance &&
             Vector3.Distance(transform.TransformPoint(hole.EndPoint), endPosition) <= endTolerance &&
             hole.Width - width <= widthTolerance
             );
@@ -58,7 +65,7 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             foreach (Hole hole in holes)
             {
-                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.EnterPoint), transform.TransformPoint(hole.EndPoint), hole.Width, Color.green);
+                DebugUtils.DrawWireCylinderGizmo(transform.TransformPoint(hole.EnterPoint), transform.TransformPoint(hole.EndPoint), hole.Width, Color.green);
             }
         }
     }

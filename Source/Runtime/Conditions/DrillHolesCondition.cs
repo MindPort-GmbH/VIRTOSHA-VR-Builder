@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Linq;
 using System.Runtime.Serialization;
 using UnityEngine.Scripting;
 using VRBuilder.Core;
@@ -10,10 +11,9 @@ using VRBuilder.VIRTOSHA.Properties;
 namespace VRBuilder.VIRTOSHA.Conditions
 {
     /// <summary>
-    /// Condition which becomes completed when a hole is drilled at the required position.
+    /// Condition which becomes completed when a hole is created at the required position.
     /// </summary>
     [DataContract(IsReference = true)]
-    [HelpLink("https://www.mindport.co/vr-builder/manual/default-conditions/use-object")]
     public class DrillHolesCondition : Condition<DrillHolesCondition.EntityData>
     {
         public class EntityData : IConditionData
@@ -30,7 +30,20 @@ namespace VRBuilder.VIRTOSHA.Conditions
 
             [IgnoreDataMember]
             [HideInProcessInspector]
-            public string Name => $"Drill {DrillableObject}";
+            public string Name
+            {
+                get
+                {
+                    string multipleTimes = "";
+
+                    if (DrillableSockets.HasValue() && DrillableSockets.Values.Count() > 1)
+                    {
+                        multipleTimes = $" {DrillableSockets.Values.Count()} times";
+                    }
+
+                    return $"Drill {DrillableObject}{multipleTimes}";
+                }
+            }
 
             public Metadata Metadata { get; set; }
         }
@@ -64,9 +77,10 @@ namespace VRBuilder.VIRTOSHA.Conditions
             {
                 foreach (IDrillableSocketProperty drillableSocket in Data.DrillableSockets.Values)
                 {
-                    Data.DrillableObject.Value.CreateHole(Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.EnterPoint),
-                        Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.EndPoint),
-                        drillableSocket.Width);
+                    if (Data.DrillableObject.Value.HasHole(drillableSocket.EnterPoint, drillableSocket.EndPoint, drillableSocket.Width, drillableSocket.EnterTolerance, drillableSocket.EndTolerance, drillableSocket.WidthTolerance) == false)
+                    {
+                        Data.DrillableObject.Value.CreateHole(drillableSocket.EnterPoint, drillableSocket.EndPoint, drillableSocket.Width);
+                    }
                 }
             }
         }

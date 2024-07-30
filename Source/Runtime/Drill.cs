@@ -125,7 +125,7 @@ namespace VRBuilder.VIRTOSHA
             }
 
             Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
-            DebugUtils.DrawCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, UnityEngine.Color.red);
+            DebugUtils.DrawWireCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, UnityEngine.Color.red);
         }
 
         public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition, out float projectionLength)
