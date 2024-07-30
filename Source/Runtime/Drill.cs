@@ -5,6 +5,10 @@ using VRBuilder.VIRTOSHA.Properties;
 
 namespace VRBuilder.VIRTOSHA
 {
+    /// <summary>
+    /// Component defining a drilling tool that can be activated by holding the use action.
+    /// Requires a <see cref="DrillBit"/> component on a child object.
+    /// </summary>
     [RequireComponent(typeof(IUsableProperty))]
     public class Drill : MonoBehaviour
     {
@@ -14,14 +18,22 @@ namespace VRBuilder.VIRTOSHA
         Vector3 drillStartPosition;
         Vector3 drillDirection;
         float drillDistance = 0f;
-        float maxDeviation = 0.05f;
         bool isDrilling;
+
+        [SerializeField]
+        [Tooltip("Distance from the drilled axis at which the drilling is automatically interrupted.")]
+        float maxDeviation = 0.05f;
 
         private void OnEnable()
         {
             if (drillBit == null)
             {
                 drillBit = GetComponentInChildren<DrillBit>();
+            }
+
+            if (drillBit == null)
+            {
+                Debug.LogError($"The {typeof(Drill).Name} component on '{gameObject.name}' cannot work without a {typeof(DrillBit).Name} component on a child object. Please create one.");
             }
 
             if (usableProperty == null)
@@ -31,9 +43,6 @@ namespace VRBuilder.VIRTOSHA
 
             usableProperty.UseStarted.AddListener(OnUseStarted);
             usableProperty.UseEnded.AddListener(OnUseEnded);
-
-            //DEBUG
-            OnUseStarted(new UsablePropertyEventArgs());
         }
 
         private void OnDisable()
@@ -125,10 +134,10 @@ namespace VRBuilder.VIRTOSHA
             }
 
             Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
-            DebugUtils.DrawWireCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, UnityEngine.Color.red);
+            DebugUtils.DrawWireCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, Color.red);
         }
 
-        public float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition, out float projectionLength)
+        private float CalculateDeviation(Vector3 origin, Vector3 direction, Vector3 currentPosition, out float projectionLength)
         {
             direction.Normalize();
             Vector3 originToCurrent = currentPosition - origin;

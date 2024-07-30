@@ -7,28 +7,43 @@ using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
+    /// <summary>
+    /// A game object defining a potential hole to be drilled.
+    /// </summary>
     [ExecuteInEditMode]
     public class DrillableSocketProperty : ProcessSceneObjectProperty, IDrillableSocketProperty
     {
         private DrillableSocketEndPoint endPoint;
 
         [SerializeField]
+        [Tooltip("Width of the hole.")]
         private float width = 0.01f;
 
         [SerializeField]
+        [Tooltip("Maximum acceptable distance from the enter point.")]
         private float enterTolerance = 0.02f;
 
         [SerializeField]
+        [Tooltip("Maximum acceptable distance from the end point.")]
         private float endTolerance = 0.04f;
 
         [SerializeField]
+        [Tooltip("Maximum acceptable difference in width.")]
         private float widthTolerance = 0.01f;
 
         [SerializeField]
+        [Tooltip("If true, the enter point will automatically move to the surface of the most suitable drillable object.")]
         private bool placeEnterPointOnDrillableObjectSurface = true;
 
+        /// <summary>
+        /// Width of the hole.
+        /// </summary>
         public float Width => width;
 
+        /// <summary>
+        /// Beginning point of the hole. Can either correspond to transform or 
+        /// be placed on the surface of an intersecting drillable object.
+        /// </summary>
         public Vector3 EnterPoint
         {
             get
@@ -42,6 +57,57 @@ namespace VRBuilder.VIRTOSHA.Properties
                     return transform.position;
                 }
             }
+        }
+
+        /// <summary>
+        /// End point of the hole. Corresponds to the position of the end point game object
+        /// parented to this drillable socket.
+        /// </summary>
+        public Vector3 EndPoint
+        {
+            get
+            {
+                if (endPoint == null)
+                {
+                    AssignEndPoint();
+                }
+
+                return endPoint.transform.position;
+            }
+        }
+
+        /// <summary>
+        /// Maximum acceptable distance from the enter point.
+        /// </summary>
+        public float EnterTolerance => enterTolerance;
+
+        /// <summary>
+        /// Maximum acceptable distance from the end point.
+        /// </summary>
+        public float EndTolerance => endTolerance;
+
+        /// <summary>
+        /// Maximum acceptable difference in width.
+        /// </summary>
+        public float WidthTolerance => widthTolerance;
+
+        /// <summary>
+        /// Configure the drillable socket with the provided parameters.
+        /// </summary>
+        public void Configure(Hole hole, float enterTolerance = 0.01F, float endTolerance = 0.01F, float widthTolerance = 0.001F, bool placeEnterPointOnSurface = true)
+        {
+            if (endPoint == null)
+            {
+                AssignEndPoint();
+            }
+
+            transform.position = hole.EnterPoint;
+            endPoint.transform.position = hole.EndPoint;
+            width = hole.Width;
+            this.enterTolerance = enterTolerance;
+            this.endTolerance = endTolerance;
+            this.widthTolerance = widthTolerance;
+            placeEnterPointOnDrillableObjectSurface = placeEnterPointOnSurface;
         }
 
         private Vector3 CalculateEnterPointOnObjectSurface()
@@ -58,25 +124,6 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             return transform.position;
         }
-
-        public Vector3 EndPoint
-        {
-            get
-            {
-                if (endPoint == null)
-                {
-                    AssignEndPoint();
-                }
-
-                return endPoint.transform.position;
-            }
-        }
-
-        public float EnterTolerance => enterTolerance;
-
-        public float EndTolerance => endTolerance;
-
-        public float WidthTolerance => widthTolerance;
 
         private void Awake()
         {
@@ -102,22 +149,6 @@ namespace VRBuilder.VIRTOSHA.Properties
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(EnterPoint, EnterTolerance);
             Gizmos.DrawWireSphere(EndPoint, EndTolerance);
-        }
-
-        public void Configure(Hole hole, float enterTolerance = 0.01F, float endTolerance = 0.01F, float widthTolerance = 0.001F, bool placeEnterPointOnSurface = true)
-        {
-            if (endPoint == null)
-            {
-                AssignEndPoint();
-            }
-
-            transform.position = hole.EnterPoint;
-            endPoint.transform.position = hole.EndPoint;
-            width = hole.Width;
-            this.enterTolerance = enterTolerance;
-            this.endTolerance = endTolerance;
-            this.widthTolerance = widthTolerance;
-            placeEnterPointOnDrillableObjectSurface = placeEnterPointOnSurface;
         }
     }
 }

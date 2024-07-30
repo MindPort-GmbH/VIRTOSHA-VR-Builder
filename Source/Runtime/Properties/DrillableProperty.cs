@@ -8,6 +8,9 @@ using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
+    /// <summary>
+    /// Property that stores holes that can be dynamically drilled on its game object.
+    /// </summary>
     public class DrillableProperty : LockableProperty, IDrillableProperty
     {
         private List<Hole> holes = new List<Hole>();
@@ -20,6 +23,7 @@ namespace VRBuilder.VIRTOSHA.Properties
         [SerializeField]
         private UnityEvent<DrillablePropertyEventArgs> holeCreated = new UnityEvent<DrillablePropertyEventArgs>();
 
+        /// <inheritdoc/>       
         public UnityEvent<DrillablePropertyEventArgs> HoleCreated => holeCreated;
 
         /// <inheritdoc/>       
@@ -32,6 +36,7 @@ namespace VRBuilder.VIRTOSHA.Properties
                 width));
         }
 
+        /// <inheritdoc/>       
         public void CreateHole(Hole hole)
         {
             CreateHole(hole.EnterPoint, hole.EndPoint, hole.Width);
@@ -47,6 +52,7 @@ namespace VRBuilder.VIRTOSHA.Properties
             );
         }
 
+        /// <inheritdoc/>       
         public bool HasHole(Hole hole, float enterTolerance, float endTolerance, float widthTolerance)
         {
             return HasHole(hole.EnterPoint, hole.EndPoint, hole.Width, enterTolerance, endTolerance, widthTolerance);

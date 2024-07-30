@@ -6,6 +6,7 @@ namespace VRBuilder.VIRTOSHA
 {
     /// <summary>
     /// Defines a drill bit used by a <see cref="Drill"/> to drill holes.
+    /// Needs a reference to a <see cref="DrillTip"/> component.
     /// </summary>
     public class DrillBit : MonoBehaviour
     {
@@ -14,7 +15,7 @@ namespace VRBuilder.VIRTOSHA
         private float width = 0.05f;
 
         [SerializeField]
-        [Tooltip("Tip associated with this drill bit. If null, it will attempt to find one in its children.")]
+        [Tooltip("Tip associated with this drill bit. If null, it will attempt to find one on its children.")]
         private DrillTip drillTip;
 
         /// <summary>
@@ -27,30 +28,47 @@ namespace VRBuilder.VIRTOSHA
         /// </summary>
         public bool InUse { get; set; }
 
+        /// <summary>
+        /// Returns the base of the drill bit.
+        /// </summary>
+        public Transform Base => transform;
+
+        /// <summary>
+        /// Width of the holes created by this drill bit.
+        /// </summary>
+        public float Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
+
         private void Awake()
+        {
+            CheckForDrillTip();
+            drillTip.Init(this);
+        }
+
+        private void CheckForDrillTip()
         {
             if (drillTip == null)
             {
                 drillTip = GetComponentInChildren<DrillTip>();
             }
 
-            drillTip.Init(this);
+            if (drillTip == null)
+            {
+                Debug.LogError($"The {typeof(DrillBit).Name} component on '{gameObject.name}' cannot work without a {typeof(DrillTip).Name} component on a child object. Please create one.");
+            }
         }
 
         public Transform Tip
         {
             get
             {
-                if (drillTip == null)
-                {
-                    drillTip = GetComponentInChildren<DrillTip>();
-                }
+                CheckForDrillTip();
                 return drillTip.transform;
             }
         }
-
-        public Transform Base => transform;
-        public float Width => width;
 
         public void EmitTouchedDrillableObject(IDrillableProperty drillableProperty, Collider otherCollider)
         {
