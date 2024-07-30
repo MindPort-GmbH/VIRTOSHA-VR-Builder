@@ -14,7 +14,7 @@ namespace VRBuilder.VIRTOSHA
 
         private void OnTriggerEnter(Collider other)
         {
-            if (parentDrillBit.IsUsing == false)
+            if (parentDrillBit.InUse == false)
             {
                 return;
             }

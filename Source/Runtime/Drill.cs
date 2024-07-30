@@ -45,7 +45,7 @@ namespace VRBuilder.VIRTOSHA
         private void OnUseStarted(UsablePropertyEventArgs arg0)
         {
             drillBit.TouchedDrillableObject += OnTouchedDrillableObject;
-            drillBit.IsUsing = true;
+            drillBit.InUse = true;
         }
 
         private void OnTouchedDrillableObject(object sender, DrillBitEventArgs e)
@@ -70,7 +70,7 @@ namespace VRBuilder.VIRTOSHA
 
         private void OnUseEnded(UsablePropertyEventArgs args)
         {
-            drillBit.IsUsing = false;
+            drillBit.InUse = false;
 
             if (isDrilling == false)
             {

@@ -11,13 +11,17 @@ namespace VRBuilder.VIRTOSHA.Properties
         private List<Hole> holes = new List<Hole>();
 
         [SerializeField]
+        [Tooltip("If selected, holes in the object will be displayed as gizmos in the editor window.")]
         private bool debugDisplayHoles;
 
+        /// <inheritdoc/>       
         public void CreateHole(Vector3 startPosition, Vector3 endPosition, float width)
         {
+            // TODO should probably not create holes if locked.
             holes.Add(new Hole(startPosition, endPosition, width));
         }
 
+        /// <inheritdoc/>       
         public bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance)
         {
             return holes.Any(hole =>
@@ -29,11 +33,6 @@ namespace VRBuilder.VIRTOSHA.Properties
 
         protected override void InternalSetLocked(bool lockState)
         {
-        }
-
-        private void Awake()
-        {
-            holes.Add(new Hole(new Vector3(0, .5f, 0), new Vector3(0, 0, 0), 0.1f));
         }
 
         private void OnDrawGizmos()

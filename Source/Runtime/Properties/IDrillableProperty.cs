@@ -9,8 +9,14 @@ namespace VRBuilder.VIRTOSHA.Properties
     /// </summary>
     public interface IDrillableProperty : ISceneObjectProperty, ILockable
     {
-        void CreateHole(Vector3 startPosition, Vector3 endPosition, float width);
+        /// <summary>
+        /// Creates a hole with the specified characteristic in the object.
+        /// </summary>
+        void CreateHole(Vector3 enterPosition, Vector3 endPosition, float width);
 
-        bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance);
+        /// <summary>
+        /// Returns true if the object has at least a hole that satisfies the given requisites.
+        /// </summary>
+        bool HasHole(Vector3 enterPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance);
     }
 }

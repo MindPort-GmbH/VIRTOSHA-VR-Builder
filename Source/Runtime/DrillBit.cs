@@ -4,16 +4,28 @@ using VRBuilder.VIRTOSHA.Properties;
 
 namespace VRBuilder.VIRTOSHA
 {
+    /// <summary>
+    /// Defines a drill bit used by a <see cref="Drill"/> to drill holes.
+    /// </summary>
     public class DrillBit : MonoBehaviour
     {
         [SerializeField]
+        [Tooltip("Width of the holes created by this drill bit.")]
         private float width = 0.05f;
 
         [SerializeField]
+        [Tooltip("Tip associated with this drill bit. If null, it will attempt to find one in its children.")]
         private DrillTip drillTip;
 
+        /// <summary>
+        /// Called when the tip of the drill bit touches an object which is drillable.
+        /// </summary>
         public event EventHandler<DrillBitEventArgs> TouchedDrillableObject;
-        public bool IsUsing { get; set; }
+
+        /// <summary>
+        /// True while the drill is being used.
+        /// </summary>
+        public bool InUse { get; set; }
 
         private void Awake()
         {
