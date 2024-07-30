@@ -5,15 +5,15 @@ using VRBuilder.VIRTOSHA.Conditions;
 namespace VRBuilder.Editor.VIRTOSHA.UI.Conditions
 {
     /// <inheritdoc />
-    public class HasDrilledHolesMenuItem : MenuItem<ICondition>
+    public class DrillHolesConditionMenuItem : MenuItem<ICondition>
     {
         /// <inheritdoc />
-        public override string DisplayedName { get; } = "VIRTOSHA/Has drilled holes";
+        public override string DisplayedName { get; } = "VIRTOSHA/Drill holes";
 
         /// <inheritdoc />
         public override ICondition GetNewItem()
         {
-            return new HasDrilledHolesCondition();
+            return new DrillHolesCondition();
         }
     }
 }

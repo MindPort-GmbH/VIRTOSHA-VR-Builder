@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace VRBuilder.VIRTOSHA.Properties
+namespace VRBuilder.VIRTOSHA.Structs
 {
     /// <summary>
     /// Defines a hole drilled on a game object.
@@ -10,23 +10,28 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <summary>
         /// The start point of the hole in local space.
         /// </summary>
-        public Vector3 Start { get; private set; }
+        public Vector3 EnterPoint { get; private set; }
 
         /// <summary>
         /// The end point of the hole in local space.
         /// </summary>
-        public Vector3 End { get; private set; }
+        public Vector3 EndPoint { get; private set; }
 
         /// <summary>
         /// The width of the hole.
         /// </summary>
         public float Width { get; private set; }
 
-        public Hole(Vector3 start, Vector3 end, float width)
+        public Hole(Vector3 enterPoint, Vector3 endPoint, float width)
         {
-            Start = start;
-            End = end;
+            EnterPoint = enterPoint;
+            EndPoint = endPoint;
             Width = width;
+        }
+
+        public override string ToString()
+        {
+            return $"[{EnterPoint}-{EndPoint}W{Width}]";
         }
     }
 }

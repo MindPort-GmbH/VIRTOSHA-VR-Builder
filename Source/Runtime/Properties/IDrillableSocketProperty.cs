@@ -1,5 +1,6 @@
 using UnityEngine;
 using VRBuilder.Core.Properties;
+using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
@@ -11,31 +12,36 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <summary>
         /// Expected width of the drillable hole.
         /// </summary>
-        public float Width { get; }
+        float Width { get; }
 
         /// <summary>
         /// Expected enter point of the hole.
         /// </summary>
-        public Vector3 EnterPoint { get; }
+        Vector3 EnterPoint { get; }
 
         /// <summary>
         /// Expected end point of the hole.
         /// </summary>
-        public Vector3 EndPoint { get; }
+        Vector3 EndPoint { get; }
 
         /// <summary>
         /// Distance from the expected enter point which will still be considered valid.
         /// </summary>
-        public float EnterTolerance { get; }
+        float EnterTolerance { get; }
 
         /// <summary>
         /// Distance from the expected end point which will still be considered valid.
         /// </summary>
-        public float EndTolerance { get; }
+        float EndTolerance { get; }
 
         /// <summary>
         /// Acceptable difference in width with the actual hole.
         /// </summary>
-        public float WidthTolerance { get; }
+        float WidthTolerance { get; }
+
+        /// <summary>
+        /// Configures the drillable socket with the desired values.
+        /// </summary>
+        void Configure(Hole hole, float enterTolerance = 0.01f, float endTolerance = 0.01f, float widthTolerance = 0.001f, bool placeEnterPointOnSurface = true);
     }
 }

@@ -14,7 +14,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
     /// </summary>
     [DataContract(IsReference = true)]
     [HelpLink("https://www.mindport.co/vr-builder/manual/default-conditions/use-object")]
-    public class HasDrilledHolesCondition : Condition<HasDrilledHolesCondition.EntityData>
+    public class DrillHolesCondition : Condition<DrillHolesCondition.EntityData>
     {
         public class EntityData : IConditionData
         {
@@ -72,7 +72,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
         }
 
         [JsonConstructor, Preserve]
-        public HasDrilledHolesCondition()
+        public DrillHolesCondition()
         {
             Data.DrillableObject = new SingleScenePropertyReference<IDrillableProperty>();
             Data.DrillableSockets = new MultipleScenePropertyReference<IDrillableSocketProperty>();

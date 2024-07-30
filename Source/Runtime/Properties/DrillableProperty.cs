@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Utils;
+using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
@@ -15,20 +16,33 @@ namespace VRBuilder.VIRTOSHA.Properties
         private bool debugDisplayHoles;
 
         /// <inheritdoc/>       
-        public void CreateHole(Vector3 startPosition, Vector3 endPosition, float width)
+        public void CreateHole(Vector3 enterPosition, Vector3 endPosition, float width)
         {
             // TODO should probably not create holes if locked.
-            holes.Add(new Hole(startPosition, endPosition, width));
+            holes.Add(new Hole(
+                transform.InverseTransformPoint(enterPosition),
+                transform.InverseTransformPoint(endPosition),
+                width));
+        }
+
+        public void CreateHole(Hole hole)
+        {
+            CreateHole(hole.EnterPoint, hole.EndPoint, hole.Width);
         }
 
         /// <inheritdoc/>       
         public bool HasHole(Vector3 startPosition, Vector3 endPosition, float width, float startTolerance, float endTolerance, float widthTolerance)
         {
             return holes.Any(hole =>
-            Vector3.Distance(transform.TransformPoint(hole.Start), startPosition) <= startTolerance &&
-            Vector3.Distance(transform.TransformPoint(hole.End), endPosition) <= endTolerance &&
+            Vector3.Distance(transform.TransformPoint(hole.EnterPoint), startPosition) <= startTolerance &&
+            Vector3.Distance(transform.TransformPoint(hole.EndPoint), endPosition) <= endTolerance &&
             hole.Width - width <= widthTolerance
             );
+        }
+
+        public bool HasHole(Hole hole, float enterTolerance, float endTolerance, float widthTolerance)
+        {
+            return HasHole(hole.EnterPoint, hole.EndPoint, hole.Width, enterTolerance, endTolerance, widthTolerance);
         }
 
         protected override void InternalSetLocked(bool lockState)
@@ -44,7 +58,7 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             foreach (Hole hole in holes)
             {
-                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.Start), transform.TransformPoint(hole.End), hole.Width, Color.green);
+                DebugUtils.DrawCylinderGizmo(transform.TransformPoint(hole.EnterPoint), transform.TransformPoint(hole.EndPoint), hole.Width, Color.green);
             }
         }
     }

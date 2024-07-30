@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Utils;
+using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
@@ -101,6 +102,22 @@ namespace VRBuilder.VIRTOSHA.Properties
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(EnterPoint, EnterTolerance);
             Gizmos.DrawWireSphere(EndPoint, EndTolerance);
+        }
+
+        public void Configure(Hole hole, float enterTolerance = 0.01F, float endTolerance = 0.01F, float widthTolerance = 0.001F, bool placeEnterPointOnSurface = true)
+        {
+            if (endPoint == null)
+            {
+                AssignEndPoint();
+            }
+
+            transform.position = hole.EnterPoint;
+            endPoint.transform.position = hole.EndPoint;
+            width = hole.Width;
+            this.enterTolerance = enterTolerance;
+            this.endTolerance = endTolerance;
+            this.widthTolerance = widthTolerance;
+            placeEnterPointOnDrillableObjectSurface = placeEnterPointOnSurface;
         }
     }
 }
