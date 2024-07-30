@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Utils;
@@ -12,11 +14,51 @@ namespace VRBuilder.VIRTOSHA.Properties
         [SerializeField]
         private float width = 0.01f;
 
+        [SerializeField]
+        private float enterTolerance = 0.02f;
+
+        [SerializeField]
+        private float endTolerance = 0.04f;
+
+        [SerializeField]
+        private float widthTolerance = 0.01f;
+
+        [SerializeField]
+        private bool placeEnterPointOnDrillableObjectSurface = true;
+
         public float Width => width;
 
-        public Vector3 Start => transform.position;
+        public Vector3 EnterPoint
+        {
+            get
+            {
+                if (placeEnterPointOnDrillableObjectSurface)
+                {
+                    return CalculateEnterPointOnObjectSurface();
+                }
+                else
+                {
+                    return transform.position;
+                }
+            }
+        }
 
-        public Vector3 End
+        private Vector3 CalculateEnterPointOnObjectSurface()
+        {
+            Ray ray = new Ray(transform.position, (EndPoint - transform.position).normalized);
+            RaycastHit[] hits = Physics.RaycastAll(ray, Vector3.Distance(transform.position, EndPoint));
+
+            IEnumerable<Vector3> contactPoints = hits.Where(hit => hit.collider.GetComponent<IDrillableProperty>() != null).Select(hit => hit.point);
+
+            if (contactPoints.Any())
+            {
+                return contactPoints.OrderBy(point => Vector3.Distance(transform.position, point)).First();
+            }
+
+            return transform.position;
+        }
+
+        public Vector3 EndPoint
         {
             get
             {
@@ -29,12 +71,18 @@ namespace VRBuilder.VIRTOSHA.Properties
             }
         }
 
+        public float EnterTolerance => enterTolerance;
+
+        public float EndTolerance => endTolerance;
+
+        public float WidthTolerance => widthTolerance;
+
         private void Awake()
         {
             AssignEndPoint();
         }
 
-        void AssignEndPoint()
+        private void AssignEndPoint()
         {
             endPoint = GetComponentInChildren<DrillableSocketEndPoint>();
 
@@ -49,7 +97,10 @@ namespace VRBuilder.VIRTOSHA.Properties
 
         private void OnDrawGizmos()
         {
-            DebugUtils.DrawCylinderGizmo(Start, End, Width, Color.cyan);
+            DebugUtils.DrawCylinderGizmo(transform.position, EndPoint, Width, Color.cyan);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(EnterPoint, EnterTolerance);
+            Gizmos.DrawWireSphere(EndPoint, EndTolerance);
         }
     }
 }

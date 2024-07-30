@@ -47,7 +47,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
 
                 foreach (IDrillableSocketProperty drillableSocket in Data.DrillableSockets.Values)
                 {
-                    isCompleted &= Data.DrillableObject.Value.HasHole(drillableSocket.Start, drillableSocket.End, drillableSocket.Width, 0.01f, 0.01f, 0.01f);
+                    isCompleted &= Data.DrillableObject.Value.HasHole(drillableSocket.EnterPoint, drillableSocket.EndPoint, drillableSocket.Width, drillableSocket.EnterTolerance, drillableSocket.EndTolerance, drillableSocket.WidthTolerance);
                 }
 
                 return isCompleted;
@@ -64,8 +64,8 @@ namespace VRBuilder.VIRTOSHA.Conditions
             {
                 foreach (IDrillableSocketProperty drillableSocket in Data.DrillableSockets.Values)
                 {
-                    Data.DrillableObject.Value.CreateHole(Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.Start),
-                        Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.End),
+                    Data.DrillableObject.Value.CreateHole(Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.EnterPoint),
+                        Data.DrillableObject.Value.SceneObject.GameObject.transform.InverseTransformPoint(drillableSocket.EndPoint),
                         drillableSocket.Width);
                 }
             }

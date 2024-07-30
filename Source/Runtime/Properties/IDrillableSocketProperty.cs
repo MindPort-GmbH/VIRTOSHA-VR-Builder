@@ -9,7 +9,10 @@ namespace VRBuilder.VIRTOSHA.Properties
     public interface IDrillableSocketProperty : ISceneObjectProperty
     {
         public float Width { get; }
-        public Vector3 Start { get; }
-        public Vector3 End { get; }
+        public Vector3 EnterPoint { get; }
+        public Vector3 EndPoint { get; }
+        public float EnterTolerance { get; }
+        public float EndTolerance { get; }
+        public float WidthTolerance { get; }
     }
 }
