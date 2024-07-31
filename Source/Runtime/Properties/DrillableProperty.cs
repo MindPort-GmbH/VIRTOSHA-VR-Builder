@@ -33,7 +33,9 @@ namespace VRBuilder.VIRTOSHA.Properties
             holes.Add(new Hole(
                 transform.InverseTransformPoint(enterPosition),
                 transform.InverseTransformPoint(endPosition),
-                width));
+            width));
+
+            holeCreated?.Invoke(new DrillablePropertyEventArgs(new Hole(enterPosition, endPosition, width)));
         }
 
         /// <inheritdoc/>       

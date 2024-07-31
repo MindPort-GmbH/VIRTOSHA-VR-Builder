@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using VRBuilder.VIRTOSHA.Properties;
 
-namespace VRBuilder.VIRTOSHA
+namespace VRBuilder.VIRTOSHA.Components
 {
     /// <summary>
     /// Defines a drill bit used by a <see cref="Drill"/> to drill holes.

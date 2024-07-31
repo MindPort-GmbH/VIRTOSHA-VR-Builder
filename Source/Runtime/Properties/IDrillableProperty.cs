@@ -40,5 +40,11 @@ namespace VRBuilder.VIRTOSHA.Properties
 
     public class DrillablePropertyEventArgs : EventArgs
     {
+        public readonly Hole Hole;
+
+        public DrillablePropertyEventArgs(Hole hole)
+        {
+            Hole = hole;
+        }
     }
 }

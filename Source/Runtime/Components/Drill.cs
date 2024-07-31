@@ -1,9 +1,10 @@
+using System.Linq;
 using UnityEngine;
 using VRBuilder.BasicInteraction.Properties;
 using VRBuilder.Core.Utils;
 using VRBuilder.VIRTOSHA.Properties;
 
-namespace VRBuilder.VIRTOSHA
+namespace VRBuilder.VIRTOSHA.Components
 {
     /// <summary>
     /// Component defining a drilling tool that can be activated by holding the use action.
@@ -43,6 +44,9 @@ namespace VRBuilder.VIRTOSHA
 
             usableProperty.UseStarted.AddListener(OnUseStarted);
             usableProperty.UseEnded.AddListener(OnUseEnded);
+
+            //DEBUG
+            OnUseStarted(new UsablePropertyEventArgs());
         }
 
         private void OnDisable()
@@ -65,16 +69,23 @@ namespace VRBuilder.VIRTOSHA
             }
 
             currentDrilledObject = e.DrillableProperty;
-            drillStartPosition = GetClosestPointOnCollider(drillBit.Base.position, e.OtherCollider);
+            drillStartPosition = GetClosestPointOnCollider(e.OtherCollider);
             drillDirection = (drillBit.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
         }
 
-        private Vector3 GetClosestPointOnCollider(Vector3 position, Collider otherCollider)
+        private Vector3 GetClosestPointOnCollider(Collider otherCollider)
         {
-            Vector3 closestPoint = otherCollider.ClosestPoint(position);
+            Ray ray = new Ray(drillBit.Base.position, drillBit.Tip.position - drillBit.Base.position);
+            RaycastHit[] hits = Physics.RaycastAll(ray, Vector3.Distance(drillBit.Base.position, drillBit.Tip.position));
 
-            return closestPoint;
+            if (hits.Any(hit => hit.collider == otherCollider))
+            {
+                RaycastHit hit = hits.First(hit => hit.collider == otherCollider);
+                return hit.point;
+            }
+
+            return drillBit.Tip.position;
         }
 
         private void OnUseEnded(UsablePropertyEventArgs args)

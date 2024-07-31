@@ -1,7 +1,7 @@
 using UnityEngine;
 using VRBuilder.VIRTOSHA.Properties;
 
-namespace VRBuilder.VIRTOSHA
+namespace VRBuilder.VIRTOSHA.Components
 {
     /// <summary>
     /// Component representing the tip of the drill, used to register collisions when starting to drill holes.
