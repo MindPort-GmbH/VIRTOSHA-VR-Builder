@@ -11,7 +11,7 @@ namespace VRBuilder.VIRTOSHA.Properties
     /// A game object defining a potential hole to be drilled.
     /// </summary>
     [ExecuteInEditMode]
-    public class DrillableSocketProperty : ProcessSceneObjectProperty, IDrillableSocketProperty
+    public class DrillableSocketProperty : LockableProperty, IDrillableSocketProperty
     {
         private DrillableSocketEndPoint endPoint;
 
@@ -34,6 +34,16 @@ namespace VRBuilder.VIRTOSHA.Properties
         [SerializeField]
         [Tooltip("If true, the enter point will automatically move to the surface of the most suitable drillable object.")]
         private bool placeEnterPointOnDrillableObjectSurface = true;
+
+        [SerializeField]
+        [Tooltip("If true, a highlight object will be shown when this property is unlocked.")]
+        private bool showHighlightObject = true;
+
+        [SerializeField]
+        [Tooltip("Material to use for the highlight object.")]
+        private Material highlightMaterial;
+
+        private GameObject highlightObject;
 
         /// <summary>
         /// Width of the hole.
@@ -149,6 +159,46 @@ namespace VRBuilder.VIRTOSHA.Properties
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(EnterPoint, EnterTolerance);
             Gizmos.DrawWireSphere(EndPoint, EndTolerance);
+        }
+
+        private void CreateHighlightObject()
+        {
+            highlightObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            GameObject.Destroy(highlightObject.GetComponent<Collider>());
+
+            Vector3 midpoint = (transform.position + EndPoint) / 2.0f;
+            highlightObject.transform.position = midpoint;
+
+            float distance = Vector3.Distance(transform.position, EndPoint);
+            highlightObject.transform.localScale = new Vector3(Width, distance / 2.0f, Width);
+
+            Vector3 direction = EndPoint - transform.position;
+            highlightObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
+
+            highlightObject.transform.parent = transform;
+
+            if (highlightMaterial != null)
+            {
+                MeshRenderer meshRenderer = highlightObject.gameObject.GetComponent<MeshRenderer>();
+                meshRenderer.material = highlightMaterial;
+            }
+        }
+
+        protected override void InternalSetLocked(bool lockState)
+        {
+            if (lockState == false)
+            {
+                if (highlightObject == null)
+                {
+                    CreateHighlightObject();
+                }
+
+                highlightObject.SetActive(true);
+            }
+            else
+            {
+                highlightObject?.SetActive(false);
+            }
         }
     }
 }

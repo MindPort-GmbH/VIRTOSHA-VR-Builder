@@ -1,5 +1,6 @@
 using UnityEngine;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.SceneObjects;
 using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Properties
@@ -7,7 +8,7 @@ namespace VRBuilder.VIRTOSHA.Properties
     /// <summary>
     /// Property for a scene object that represents a drillable hole.
     /// </summary>
-    public interface IDrillableSocketProperty : ISceneObjectProperty
+    public interface IDrillableSocketProperty : ISceneObjectProperty, ILockable
     {
         /// <summary>
         /// Expected width of the drillable hole.
