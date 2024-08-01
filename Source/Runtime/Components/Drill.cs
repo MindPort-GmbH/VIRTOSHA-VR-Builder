@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using VRBuilder.BasicInteraction.Properties;
@@ -11,19 +12,26 @@ namespace VRBuilder.VIRTOSHA.Components
     /// Requires a <see cref="DrillBit"/> component on a child object.
     /// </summary>
     [RequireComponent(typeof(IUsableProperty))]
-    public class Drill : MonoBehaviour
+    public class Drill : MonoBehaviour, IDrill
     {
         DrillBit drillBit;
         IUsableProperty usableProperty;
         IDrillableProperty currentDrilledObject = null;
         Vector3 drillStartPosition;
         Vector3 drillDirection;
-        float drillDistance = 0f;
+        float currentDrillDepth = 0f;
         bool isDrilling;
 
         [SerializeField]
         [Tooltip("Distance from the drilled axis at which the drilling is automatically interrupted.")]
         float maxDeviation = 0.05f;
+
+        public bool IsDrilling => isDrilling;
+
+        public float CurrentDrillDepth => currentDrillDepth;
+
+        public event EventHandler<DrillEventArgs> DrillingStarted;
+        public event EventHandler<DrillEventArgs> DrillingStopped;
 
         private void OnEnable()
         {
@@ -72,6 +80,7 @@ namespace VRBuilder.VIRTOSHA.Components
             drillStartPosition = GetClosestPointOnCollider(e.OtherCollider);
             drillDirection = (drillBit.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
+            DrillingStarted?.Invoke(this, new DrillEventArgs(drillStartPosition, drillDirection, drillBit.Width));
         }
 
         private Vector3 GetClosestPointOnCollider(Collider otherCollider)
@@ -108,12 +117,13 @@ namespace VRBuilder.VIRTOSHA.Components
 
             if (currentDrilledObject != null)
             {
-                Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
+                Vector3 drillEndPosition = drillStartPosition + drillDirection * currentDrillDepth;
 
                 currentDrilledObject.CreateHole(drillStartPosition, drillEndPosition, drillBit.Width);
 
                 currentDrilledObject = null;
-                drillDistance = 0f;
+                currentDrillDepth = 0f;
+                DrillingStopped?.Invoke(this, new DrillEventArgs(drillStartPosition, drillDirection, drillBit.Width));
             }
         }
 
@@ -133,7 +143,7 @@ namespace VRBuilder.VIRTOSHA.Components
 
             if (projectionLength > 0)
             {
-                drillDistance = Mathf.Max(drillDistance, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
+                currentDrillDepth = Mathf.Max(currentDrillDepth, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
             }
         }
 
@@ -144,7 +154,7 @@ namespace VRBuilder.VIRTOSHA.Components
                 return;
             }
 
-            Vector3 drillEndPosition = drillStartPosition + drillDirection * drillDistance;
+            Vector3 drillEndPosition = drillStartPosition + drillDirection * currentDrillDepth;
             DebugUtils.DrawWireCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, Color.red);
         }
 
