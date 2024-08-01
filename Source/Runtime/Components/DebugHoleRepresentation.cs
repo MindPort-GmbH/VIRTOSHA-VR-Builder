@@ -5,9 +5,12 @@ using VRBuilder.VIRTOSHA.Structs;
 namespace VRBuilder.VIRTOSHA.Components
 {
     [RequireComponent(typeof(IDrillableProperty))]
-    public class DrilledHoleRepresentation : MonoBehaviour
+    public class DebugHoleRepresentation : MonoBehaviour
     {
         private IDrillableProperty drillableProperty;
+
+        [SerializeField]
+        private DepthDisplay depthDisplayPrefab;
 
         private void OnEnable()
         {
@@ -35,10 +38,16 @@ namespace VRBuilder.VIRTOSHA.Components
             GameObject.Destroy(holeObject.GetComponent<Collider>());
             holeObject.transform.position = hole.EnterPoint;
             holeObject.transform.rotation = Quaternion.LookRotation(hole.EndPoint - hole.EnterPoint);
-            holeObject.transform.localScale = new Vector3(hole.Width, hole.Width, hole.Width / 5);
+            holeObject.transform.localScale = new Vector3(hole.Width, hole.Width, hole.Width);
             holeObject.transform.parent = transform;
 
             holeObject.GetComponent<MeshRenderer>().material.color = Color.black;
+
+            DepthDisplay depthDisplay = GameObject.Instantiate<DepthDisplay>(depthDisplayPrefab);
+            depthDisplay.transform.parent = holeObject.transform;
+            depthDisplay.transform.localPosition = Vector3.zero;
+            depthDisplay.transform.localRotation = Quaternion.identity;
+            depthDisplay.SetDepth(Vector3.Distance(hole.EnterPoint, hole.EndPoint));
         }
     }
 }
