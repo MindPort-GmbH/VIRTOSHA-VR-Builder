@@ -29,7 +29,7 @@ namespace VRBuilder.VIRTOSHA.Components
 
             IDrillableProperty drillableProperty = other.GetComponent<IDrillableProperty>();
 
-            if (drillableProperty != null)
+            if (drillableProperty != null && drillableProperty.IsLocked == false)
             {
                 parentDrillBit.EmitTouchedDrillableObject(drillableProperty, other);
             }

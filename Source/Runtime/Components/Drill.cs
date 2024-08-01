@@ -54,7 +54,7 @@ namespace VRBuilder.VIRTOSHA.Components
             usableProperty.UseEnded.AddListener(OnUseEnded);
 
             //DEBUG
-            OnUseStarted(new UsablePropertyEventArgs());
+            //OnUseStarted(new UsablePropertyEventArgs());
         }
 
         private void OnDisable()
