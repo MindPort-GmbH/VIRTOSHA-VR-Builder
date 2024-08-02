@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6772330710555524828}
   - component: {fileID: -7044890546141843685}
   m_Layer: 0
-  m_Name: DrillingAffordance
+  m_Name: DebugDrillingAffordance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aef011a3d9bef24593fd3197099175d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  depthDisplayPrefab: {fileID: 1987264557023689094, guid: c492fc14817fab942a886a70a26ea192,
+    type: 3}
 --- !u!1 &4810085671158568909
 GameObject:
   m_ObjectHideFlags: 0

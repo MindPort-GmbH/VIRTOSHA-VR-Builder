@@ -2,60 +2,44 @@ using UnityEngine;
 
 namespace VRBuilder.VIRTOSHA.Components
 {
-    [RequireComponent(typeof(IDrill))]
-    public class DebugDrillingAffordance : MonoBehaviour
+    /// <summary>
+    /// Debug drilling affordance implementation, displaying a particle system and the depth in mm.
+    /// </summary>
+    public class DebugDrillingAffordance : DrillingAffordance
     {
-        private IDrill drill;
-        private DebugDrillingAffordanceObject affordanceObject;
-
-        [SerializeField]
-        private DebugDrillingAffordanceObject affordancePrefab;
-
         [SerializeField]
         private DepthDisplay depthDisplayPrefab;
 
-        private void OnEnable()
+        private DepthDisplay depthDisplay;
+
+        private void Awake()
         {
-            if (drill == null)
-            {
-                drill = GetComponent<IDrill>();
-            }
-
-            drill.DrillingStarted += OnStartDrilling;
-            drill.DrillingStopped += OnStopDrilling;
-        }
-
-        private void OnDisable()
-        {
-            drill.DrillingStarted -= OnStartDrilling;
-            drill.DrillingStopped -= OnStopDrilling;
-        }
-
-        private void OnStartDrilling(object sender, DrillEventArgs e)
-        {
-            affordanceObject = GameObject.Instantiate<DebugDrillingAffordanceObject>(affordancePrefab);
-            affordanceObject.transform.position = e.EnterPoint;
-            affordanceObject.transform.rotation = Quaternion.LookRotation(e.Direction);
-            affordanceObject.SetWidth(e.HoleWidth);
-
-            DepthDisplay depthDisplay = GameObject.Instantiate(depthDisplayPrefab);
-            depthDisplay.transform.parent = affordanceObject.transform;
+            depthDisplay = GameObject.Instantiate<DepthDisplay>(depthDisplayPrefab);
+            depthDisplay.transform.parent = transform;
             depthDisplay.transform.localPosition = Vector3.zero;
             depthDisplay.transform.localRotation = Quaternion.identity;
-            depthDisplay.SetDepth(drill.CurrentDrillDepth);
         }
 
-        private void OnStopDrilling(object sender, DrillEventArgs e)
+        public override void SetWidth(float width)
         {
-            affordanceObject?.Destroy();
-        }
+            ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
 
-        private void Update()
-        {
-            if (drill.IsDrilling)
+            if (particleSystem == null)
             {
-                affordanceObject.SetDepth(drill.CurrentDrillDepth);
+                return;
             }
+
+            particleSystem.transform.localScale = new Vector3(width, width, width);
+        }
+
+        public override void SetDepth(float depth)
+        {
+            depthDisplay.SetDepth(depth);
+        }
+
+        public override void Remove()
+        {
+            Destroy(gameObject);
         }
     }
 }

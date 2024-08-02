@@ -21,16 +21,26 @@ namespace VRBuilder.VIRTOSHA.Components
         Vector3 drillDirection;
         float currentDrillDepth = 0f;
         bool isDrilling;
+        private DrillingAffordance affordanceObject;
 
         [SerializeField]
         [Tooltip("Distance from the drilled axis at which the drilling is automatically interrupted.")]
         float maxDeviation = 0.05f;
 
+        [SerializeField]
+        [Tooltip("If present, this prefab will be spawned at the location of a hole being drilled to visualize it.")]
+        private DrillingAffordance affordancePrefab;
+
+        /// <inheritdoc/>
         public bool IsDrilling => isDrilling;
 
+        /// <inheritdoc/>
         public float CurrentDrillDepth => currentDrillDepth;
 
+        /// <inheritdoc/>
         public event EventHandler<DrillEventArgs> DrillingStarted;
+
+        /// <inheritdoc/>
         public event EventHandler<DrillEventArgs> DrillingStopped;
 
         private void OnEnable()
@@ -54,7 +64,7 @@ namespace VRBuilder.VIRTOSHA.Components
             usableProperty.UseEnded.AddListener(OnUseEnded);
 
             //DEBUG
-            //OnUseStarted(new UsablePropertyEventArgs());
+            OnUseStarted(new UsablePropertyEventArgs());
         }
 
         private void OnDisable()
@@ -80,7 +90,26 @@ namespace VRBuilder.VIRTOSHA.Components
             drillStartPosition = GetClosestPointOnCollider(e.OtherCollider);
             drillDirection = (drillBit.transform.rotation * Vector3.forward).normalized;
             isDrilling = true;
+            VisualizeDrillingAffordance();
             DrillingStarted?.Invoke(this, new DrillEventArgs(drillStartPosition, drillDirection, drillBit.Width));
+        }
+
+        private void VisualizeDrillingAffordance()
+        {
+            if (affordancePrefab == null)
+            {
+                return;
+            }
+
+            affordanceObject = GameObject.Instantiate<DrillingAffordance>(affordancePrefab);
+            affordanceObject.transform.position = drillStartPosition;
+            affordanceObject.transform.rotation = Quaternion.LookRotation(drillDirection);
+            affordanceObject.SetWidth(drillBit.Width);
+        }
+
+        private void RemoveDrillingAffordance()
+        {
+            affordanceObject?.Remove();
         }
 
         private Vector3 GetClosestPointOnCollider(Collider otherCollider)
@@ -123,6 +152,7 @@ namespace VRBuilder.VIRTOSHA.Components
 
                 currentDrilledObject = null;
                 currentDrillDepth = 0f;
+                RemoveDrillingAffordance();
                 DrillingStopped?.Invoke(this, new DrillEventArgs(drillStartPosition, drillDirection, drillBit.Width));
             }
         }
@@ -145,6 +175,8 @@ namespace VRBuilder.VIRTOSHA.Components
             {
                 currentDrillDepth = Mathf.Max(currentDrillDepth, Vector3.Distance(drillStartPosition, drillBit.Tip.position));
             }
+
+            affordanceObject?.SetDepth(CurrentDrillDepth);
         }
 
         private void OnDrawGizmos()

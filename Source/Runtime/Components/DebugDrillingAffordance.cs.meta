@@ -1,11 +1,9 @@
 fileFormatVersion: 2
-guid: a0f1b19daf04b924d823b94c1f22b706
+guid: 9aef011a3d9bef24593fd3197099175d
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - affordancePrefab: {fileID: -7044890546141843685, guid: b977d9ecde5931a4286cfc92130a5829,
-      type: 3}
   - depthDisplayPrefab: {fileID: 1987264557023689094, guid: c492fc14817fab942a886a70a26ea192,
       type: 3}
   executionOrder: 0

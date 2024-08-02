@@ -3,9 +3,13 @@ using UnityEngine;
 
 namespace VRBuilder.VIRTOSHA.Components
 {
+    /// <summary>
+    /// Displays a value in mm on a text mesh.
+    /// </summary>
     public class DepthDisplay : MonoBehaviour
     {
         TextMeshPro textMesh;
+
         public void SetDepth(float depth)
         {
             if (textMesh == null)
