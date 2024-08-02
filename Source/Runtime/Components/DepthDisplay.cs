@@ -10,6 +10,9 @@ namespace VRBuilder.VIRTOSHA.Components
     {
         TextMeshPro textMesh;
 
+        /// <summary>
+        /// Set the displayed depth to the specified value.
+        /// </summary>        
         public void SetDepth(float depth)
         {
             if (textMesh == null)
