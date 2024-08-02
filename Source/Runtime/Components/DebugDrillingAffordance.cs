@@ -20,6 +20,7 @@ namespace VRBuilder.VIRTOSHA.Components
             depthDisplay.transform.localRotation = Quaternion.identity;
         }
 
+        /// <inheritdoc/>
         public override void SetWidth(float width)
         {
             ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
@@ -32,11 +33,13 @@ namespace VRBuilder.VIRTOSHA.Components
             particleSystem.transform.localScale = new Vector3(width, width, width);
         }
 
+        /// <inheritdoc/>
         public override void SetDepth(float depth)
         {
             depthDisplay.SetDepth(depth);
         }
 
+        /// <inheritdoc/>
         public override void Remove()
         {
             Destroy(gameObject);

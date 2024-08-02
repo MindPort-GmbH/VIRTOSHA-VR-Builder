@@ -4,6 +4,10 @@ using VRBuilder.VIRTOSHA.Structs;
 
 namespace VRBuilder.VIRTOSHA.Components
 {
+    /// <summary>
+    /// Visualizes the holes on a drillable property by spawning a sphere on the entrance point
+    /// and showing the depth in mm.
+    /// </summary>
     [RequireComponent(typeof(IDrillableProperty))]
     public class DebugHoleRepresentation : MonoBehaviour
     {
