@@ -25,7 +25,7 @@ If you want to test drilling in a sandbox environment, disable the `PROCESS_CONT
 There are three components that need to be added to a composite game object.
 
 #### The Drill Component
-The `Drill` component should be added to the main interactable body of the drill. Once added to a game object, it will automatically add dependencies to make it interactable in VR and usable in VR Builder. The `Usable Property` for VR Builder is used to determine whether the drill is activated or not. By default, this corresponds to holding the trigger button on the controller while the object is grabbed.
+The `Drill` component should be added to the main interactable body of the drill. It requires a `IUsableProperty` on the same game object in order to function. You can add VR Builder's `Usable Property` to satisfy this requirement, or use a different custom implementation if you are using an alternative interaction framework. The `Usable Property` for VR Builder is used to determine whether the drill is activated or not. By default, this corresponds to holding the trigger button on the controller while the object is grabbed.
 
 There are two parameters on the `Drill` component.
 
