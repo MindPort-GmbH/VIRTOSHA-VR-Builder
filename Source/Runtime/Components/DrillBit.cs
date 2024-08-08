@@ -57,7 +57,7 @@ namespace VRBuilder.VIRTOSHA.Components
 
             if (drillTip == null)
             {
-                Debug.LogError($"The {typeof(DrillBit).Name} component on '{gameObject.name}' cannot work without a {typeof(DrillTip).Name} component on a child object. Please create one.");
+                throw new NullReferenceException($"The {typeof(DrillBit).Name} component on '{gameObject.name}' cannot work without a {typeof(DrillTip).Name} component on a child object. Please create one.");
             }
         }
 
