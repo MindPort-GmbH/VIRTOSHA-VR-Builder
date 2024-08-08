@@ -3,7 +3,9 @@ guid: a01d9a5f6c41b1444b389631b734c2de
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - affordancePrefab: {fileID: -7044890546141843685, guid: b977d9ecde5931a4286cfc92130a5829,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
