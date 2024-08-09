@@ -267,7 +267,7 @@ MonoBehaviour:
   m_SmoothScale: 0
   m_SmoothScaleAmount: 8
   m_TightenScale: 0.1
-  m_ThrowOnDetach: 1
+  m_ThrowOnDetach: 0
   m_ThrowSmoothingDuration: 0.25
   m_ThrowSmoothingCurve:
     serializedVersion: 2
@@ -310,7 +310,8 @@ MonoBehaviour:
   serializedGuid:
     serializedGuid: 
   uniqueName: 
-  guids: []
+  guids:
+  - serializedGuid: 0b9adf514817e244af2a8af11415199f
   tags: []
 --- !u!114 &8877229788264465055
 MonoBehaviour:
@@ -436,7 +437,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.05
+  m_Radius: 0.009
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8640554471348606675
 MonoBehaviour:
@@ -461,7 +462,7 @@ GameObject:
   - component: {fileID: 4755683731725180851}
   - component: {fileID: 4482428547702243513}
   m_Layer: 0
-  m_Name: DrillBit
+  m_Name: DrillBit 3,5mm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31db02f767bbea94a9190f569960fab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 0.1
+  width: 0.0035
   drillTip: {fileID: 0}
 --- !u!1 &6428712407542070157
 GameObject:
@@ -527,7 +528,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
-  m_LocalScale: {x: 0.2, y: 0.5, z: 0.2}
+  m_LocalScale: {x: 0.035, y: 0.5, z: 0.035}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4755683731725180851}
