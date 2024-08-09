@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using VRBuilder.VIRTOSHA.Properties;
 
@@ -27,9 +28,9 @@ namespace VRBuilder.VIRTOSHA.Components
                 return;
             }
 
-            IDrillableProperty drillableProperty = other.GetComponent<IDrillableProperty>();
+            IDrillableProperty drillableProperty = other.GetComponentInParent<IDrillableProperty>();
 
-            if (drillableProperty != null && drillableProperty.IsLocked == false)
+            if (drillableProperty != null && drillableProperty.Colliders.Contains(other) && drillableProperty.IsLocked == false)
             {
                 parentDrillBit.EmitTouchedDrillableObject(drillableProperty, other);
             }

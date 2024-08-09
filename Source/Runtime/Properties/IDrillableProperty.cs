@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using VRBuilder.Core.Properties;
@@ -16,6 +17,11 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// Called when a new hole is added to this property.
         /// </summary>
         UnityEvent<DrillablePropertyEventArgs> HoleCreated { get; }
+
+        /// <summary>
+        /// Colliders affected by this drillable property.
+        /// </summary>
+        IEnumerable<Collider> Colliders { get; }
 
         /// <summary>
         /// Creates a hole with the specified characteristic in the object.

@@ -16,6 +16,10 @@ namespace VRBuilder.VIRTOSHA.Properties
         private List<Hole> holes = new List<Hole>();
 
         [SerializeField]
+        [Tooltip("List of colliders that are managed by this property. They should be children of this game object.")]
+        private List<Collider> colliders = new List<Collider>();
+
+        [SerializeField]
         [Tooltip("If selected, holes in the object will be displayed as gizmos in the editor window.")]
         private bool debugDisplayHoles;
 
@@ -27,9 +31,27 @@ namespace VRBuilder.VIRTOSHA.Properties
         public UnityEvent<DrillablePropertyEventArgs> HoleCreated => holeCreated;
 
         /// <inheritdoc/>       
+        public IEnumerable<Collider> Colliders
+        {
+            get
+            {
+                if (colliders.Count == 0)
+                {
+                    colliders.AddRange(GetComponentsInChildren<Collider>());
+                }
+
+                if (colliders.Count == 0)
+                {
+                    Debug.LogError($"{typeof(DrillableProperty).Name} on '{gameObject.name}' is missing a collider. Add some colliders to the game object hierarchy or to the list.");
+                }
+
+                return colliders;
+            }
+        }
+
+        /// <inheritdoc/>       
         public void CreateHole(Vector3 enterPosition, Vector3 endPosition, float width)
         {
-            // TODO should probably not create holes if locked.
             holes.Add(new Hole(
                 transform.InverseTransformPoint(enterPosition),
                 transform.InverseTransformPoint(endPosition),
