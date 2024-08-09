@@ -125,7 +125,7 @@ namespace VRBuilder.VIRTOSHA.Properties
             Ray ray = new Ray(transform.position, (EndPoint - transform.position).normalized);
             RaycastHit[] hits = Physics.RaycastAll(ray, Vector3.Distance(transform.position, EndPoint));
 
-            IEnumerable<Vector3> contactPoints = hits.Where(hit => hit.collider.GetComponent<IDrillableProperty>() != null).Select(hit => hit.point);
+            IEnumerable<Vector3> contactPoints = hits.Where(IsDrillablePropertyHit).Select(hit => hit.point);
 
             if (contactPoints.Any())
             {
@@ -133,6 +133,12 @@ namespace VRBuilder.VIRTOSHA.Properties
             }
 
             return transform.position;
+        }
+
+        private bool IsDrillablePropertyHit(RaycastHit hit)
+        {
+            IDrillableProperty drillableProperty = hit.collider.GetComponentInParent<IDrillableProperty>();
+            return drillableProperty != null && drillableProperty.Colliders.Contains(hit.collider);
         }
 
         private void Awake()
