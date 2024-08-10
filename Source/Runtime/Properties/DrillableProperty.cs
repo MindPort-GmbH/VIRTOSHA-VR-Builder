@@ -77,13 +77,15 @@ namespace VRBuilder.VIRTOSHA.Properties
         }
 
         /// <inheritdoc/>       
-        public bool HasHole(Hole hole, float enterTolerance, float endTolerance, float widthTolerance)
+        public bool HasHole(Hole hole, float startTolerance, float endTolerance, float widthTolerance)
         {
-            return HasHole(hole.EnterPoint, hole.EndPoint, hole.Width, enterTolerance, endTolerance, widthTolerance);
+            return HasHole(hole.EnterPoint, hole.EndPoint, hole.Width, startTolerance, endTolerance, widthTolerance);
         }
 
+        /// <inheritdoc/>  
         protected override void InternalSetLocked(bool lockState)
         {
+            // No implementation needed
         }
 
         private void OnDrawGizmos()
