@@ -48,6 +48,29 @@ namespace VRBuilder.VIRTOSHA.Components
             drillTip.Init(this);
         }
 
+        /// <summary>
+        /// Gets the transform of the drill tip.
+        /// </summary>
+        /// <returns>The transform of the drill tip.</returns>
+        public Transform Tip
+        {
+            get
+            {
+                CheckForDrillTip();
+                return drillTip.transform;
+            }
+        }
+
+        /// <summary>
+        /// Emits an event when a drillable object is touched by the drill bit.
+        /// </summary>
+        /// <param name="drillableProperty">The drillable property of the object being touched.</param>
+        /// <param name="otherCollider">The collider of the object being touched.</param>
+        public void EmitTouchedDrillableObject(IDrillableProperty drillableProperty, Collider otherCollider)
+        {
+            TouchedDrillableObject?.Invoke(this, new DrillBitEventArgs(drillableProperty, otherCollider));
+        }
+
         private void CheckForDrillTip()
         {
             if (drillTip == null)
@@ -59,20 +82,6 @@ namespace VRBuilder.VIRTOSHA.Components
             {
                 throw new NullReferenceException($"The {typeof(DrillBit).Name} component on '{gameObject.name}' cannot work without a {typeof(DrillTip).Name} component on a child object. Please create one.");
             }
-        }
-
-        public Transform Tip
-        {
-            get
-            {
-                CheckForDrillTip();
-                return drillTip.transform;
-            }
-        }
-
-        public void EmitTouchedDrillableObject(IDrillableProperty drillableProperty, Collider otherCollider)
-        {
-            TouchedDrillableObject?.Invoke(this, new DrillBitEventArgs(drillableProperty, otherCollider));
         }
     }
 

@@ -104,6 +104,11 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <summary>
         /// Configure the drillable socket with the provided parameters.
         /// </summary>
+        /// <param name="hole">The Hole object to configure the property with.</param>
+        /// <param name="enterTolerance">The tolerance value for entering the hole.</param>
+        /// <param name="endTolerance">The tolerance value for reaching the end of the hole.</param>
+        /// <param name="widthTolerance">The tolerance value for the width of the hole.</param>
+        /// <param name="placeEnterPointOnSurface">Determines whether to place the enter point on the surface of the drillable object.</param>
         public void Configure(Hole hole, float enterTolerance = 0.01F, float endTolerance = 0.01F, float widthTolerance = 0.001F, bool placeEnterPointOnSurface = true)
         {
             if (endPoint == null)
