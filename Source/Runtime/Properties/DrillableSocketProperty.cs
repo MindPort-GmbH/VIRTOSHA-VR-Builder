@@ -159,8 +159,8 @@ namespace VRBuilder.VIRTOSHA.Properties
             {
                 endPoint = new GameObject("End Point").AddComponent<DrillableSocketEndPoint>();
                 endPoint.transform.SetParent(transform);
-                endPoint.transform.position = transform.position + new Vector3(0, -0.1f, 0);
-                endPoint.transform.rotation = Quaternion.identity;
+                endPoint.transform.localPosition = new Vector3(0, -0.1f, 0);
+                endPoint.transform.localRotation = Quaternion.identity;
             }
         }
 
