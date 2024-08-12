@@ -16,12 +16,21 @@ namespace VRBuilder.VIRTOSHA.Conditions
     [DataContract(IsReference = true)]
     public class DrillHolesCondition : Condition<DrillHolesCondition.EntityData>
     {
+        /// <summary>
+        /// Entity data for <see cref="DrillHolesCondition"/>.
+        /// </summary>
         public class EntityData : IConditionData
         {
+            /// <summary>
+            /// Object to be drilled.
+            /// </summary>
             [DataMember]
             [DisplayName("Drillable object")]
             public SingleScenePropertyReference<IDrillableProperty> DrillableObject { get; set; }
 
+            /// <summary>
+            /// Sockets representing the holes to be drilled on the target object.
+            /// </summary>
             [DataMember]
             [DisplayName("Drillable sockets")]
             public MultipleScenePropertyReference<IDrillableSocketProperty> DrillableSockets { get; set; }
