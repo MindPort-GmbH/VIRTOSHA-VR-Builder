@@ -15,9 +15,15 @@ namespace VRBuilder.VIRTOSHA.Components
         {
             parentDrillBit = parent;
 
-            if (GetComponent<Collider>() == null)
+            Collider collider = GetComponent<Collider>();
+
+            if (collider == null)
             {
-                Debug.LogError($"No collider is set on {typeof(DrillTip).Name} on '{gameObject.name}'. A collider is needed for the component to work as intended. Please add one.");
+                Debug.LogError($"No collider is found on {typeof(DrillTip).Name} or its children on '{gameObject.name}'. A collider is needed for the component to work as intended. Please add one.");
+            }
+            else if (collider.isTrigger == false)
+            {
+                Debug.LogError($"The collider on {typeof(DrillTip).Name} or its children on '{gameObject.name}' is not set as a trigger. Please set 'Is Trigger' to true in the Inspector for the component to work as intended.");
             }
         }
 
