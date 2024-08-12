@@ -76,7 +76,8 @@ namespace VRBuilder.VIRTOSHA.Tests.Conditions
 
             drillableProperty.CreateHole(actual);
 
-            yield return null;
+            // Wait for fixed update to ensure the drillable socket has raycasted the correct enter point.
+            yield return new WaitForFixedUpdate();
             condition.Update();
 
             // Then it is fulfilled as intended.
