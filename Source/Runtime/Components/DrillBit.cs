@@ -15,7 +15,7 @@ namespace VRBuilder.VIRTOSHA.Components
         private float width = 0.05f;
 
         [SerializeField]
-        [Tooltip("Tip associated with this drill bit. If null, it will attempt to find one on its children.")]
+        [Tooltip("Tip associated with this drill bit. If null, it will attempt to find one first in the GameObject then its children.)]
         private DrillTip drillTip;
 
         /// <summary>
