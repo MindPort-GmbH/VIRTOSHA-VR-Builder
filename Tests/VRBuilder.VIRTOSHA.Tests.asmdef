@@ -1,0 +1,25 @@
+{
+    "name": "VRBuilder.VIRTOSHA.Tests",
+    "rootNamespace": "",
+    "references": [
+        "VRBuilder.VIRTOSHA",
+        "VRBuilder.Core",
+        "UnityEngine.TestRunner",
+        "VRBuilder.Core.Tests.PlayMode",
+        "VRBuilder.BasicInteraction"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "VR_BUILDER"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
