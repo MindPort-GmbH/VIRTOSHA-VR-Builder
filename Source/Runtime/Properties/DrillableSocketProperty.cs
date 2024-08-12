@@ -109,7 +109,7 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <param name="endTolerance">The tolerance value for reaching the end of the hole.</param>
         /// <param name="widthTolerance">The tolerance value for the width of the hole.</param>
         /// <param name="placeEnterPointOnSurface">Determines whether to place the enter point on the surface of the drillable object.</param>
-        public void Configure(Hole hole, float enterTolerance = 0.01F, float endTolerance = 0.01F, float widthTolerance = 0.001F, bool placeEnterPointOnSurface = true)
+        public void Configure(Hole hole, float enterTolerance = 0.01f, float endTolerance = 0.01f, float widthTolerance = 0.001f, bool placeEnterPointOnSurface = true)
         {
             if (endPoint == null)
             {
