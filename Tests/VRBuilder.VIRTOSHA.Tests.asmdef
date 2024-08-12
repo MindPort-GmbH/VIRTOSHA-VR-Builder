@@ -5,7 +5,8 @@
         "VRBuilder.VIRTOSHA",
         "VRBuilder.Core",
         "UnityEngine.TestRunner",
-        "VRBuilder.Core.Tests.PlayMode"
+        "VRBuilder.Core.Tests.PlayMode",
+        "VRBuilder.BasicInteraction"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
