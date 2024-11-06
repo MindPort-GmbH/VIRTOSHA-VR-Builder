@@ -1,5 +1,5 @@
 using VRBuilder.Core.Conditions;
-using VRBuilder.Editor.UI.StepInspector.Menu;
+using VRBuilder.Core.Editor.UI.StepInspector.Menu;
 using VRBuilder.VIRTOSHA.Conditions;
 
 namespace VRBuilder.Editor.VIRTOSHA.UI.Conditions
