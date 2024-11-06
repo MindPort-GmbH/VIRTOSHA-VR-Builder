@@ -20,6 +20,12 @@
         "UNITY_INCLUDE_TESTS",
         "VR_BUILDER_TESTS"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "co.mindport.vrbuilder.tests",
+            "expression": "",
+            "define": "VR_BUILDER_TESTS"
+        }
+    ],
     "noEngineReferences": false
 }
