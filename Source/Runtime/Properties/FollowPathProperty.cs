@@ -4,6 +4,7 @@
 </ai_context>
 */
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Splines; // from com.unity.splines
@@ -97,6 +98,9 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// You could also interpret 'pathCompleted >= 1f' as done.
         /// </summary>
         public bool IsPathCompleted { get; private set; }
+
+        public IEnumerable<Collider> Colliders => throw new System.NotImplementedException();
+
 
         private void Awake()
         {

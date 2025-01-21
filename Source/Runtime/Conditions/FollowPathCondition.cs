@@ -7,10 +7,12 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using UnityEngine.Scripting;
+using VRBuilder.BasicInteraction.Properties;
 using VRBuilder.Core;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Conditions;
 using VRBuilder.Core.SceneObjects;
+using VRBuilder.VIRTOSHA.Components;
 using VRBuilder.VIRTOSHA.Properties;
 
 namespace VRBuilder.VIRTOSHA.Conditions
@@ -31,7 +33,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
             /// </summary>
             [DataMember]
             [DisplayName("Follow Path Object")]
-            public SingleScenePropertyReference<IFollowPathObjectProperty> FollowPathObject { get; set; }
+            public SingleScenePropertyReference<IGrabbableProperty> FollowPathObject { get; set; }
 
             /// <summary>
             /// The path property to follow.
@@ -89,7 +91,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
         [JsonConstructor, Preserve]
         public FollowPathCondition()
         {
-            Data.FollowPathObject = new SingleScenePropertyReference<IFollowPathObjectProperty>();
+            Data.FollowPathObject = new SingleScenePropertyReference<IGrabbableProperty>();
             Data.FollowPath = new SingleScenePropertyReference<IFollowPathProperty>();
         }
 
