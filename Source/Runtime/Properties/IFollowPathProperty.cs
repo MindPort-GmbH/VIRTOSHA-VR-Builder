@@ -4,15 +4,13 @@
 </ai_context>
 */
 
-using System.Collections.Generic;
-using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
   /// <summary>
-  /// Interface for a property that manages following a spline path, storing progress, events, and deviation data.
+  /// Interface for a property that manages following a splin  /// path, storing progress, events, and deviation data.
   /// </summary>
   public interface IFollowPathProperty : ISceneObjectProperty, ILockable
   {
@@ -22,9 +20,9 @@ namespace VRBuilder.VIRTOSHA.Properties
     bool IsPathCompleted { get; }
 
     /// <summary>
-    /// Colliders connected to this drillable property.
+    /// The object that follows the path.
     /// </summary>
-    IEnumerable<Collider> Colliders { get; }
+    IFollowPathObjectProperty CurrentFollowPathObjectProperty { get; set; }
 
     /// <summary>
     /// Force-complete the path (e.g., for fast-forwarding).

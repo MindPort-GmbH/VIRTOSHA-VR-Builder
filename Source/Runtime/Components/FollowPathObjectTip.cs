@@ -1,54 +1,32 @@
-using System;
-using System.Linq;
 using UnityEngine;
-using VRBuilder.VIRTOSHA.Properties;
 
 namespace VRBuilder.VIRTOSHA.Components
 {
-    [RequireComponent(typeof(Collider))]
+    /// <summary>
+    /// Component that implements IFollowPathObjectTip to provide position and rotation vectors 
+    /// for measuring path-following.
+    /// </summary>
     public class FollowPathObjectTip : MonoBehaviour, IFollowPathObjectTip
     {
         /// <summary>
-        /// Called when the tip of the object bit touches an object which is cuttable.
+        /// The vector used to measure the path-following position.
         /// </summary>
-        public event EventHandler<FollowPathObjectEventArgs> TouchedCuttableObject;
-
-        public Transform TipTransform { get; }
-
-        private Collider tipCollider;
-
-        private void Awake()
+        public Vector3 TipPosition
         {
-            tipCollider = GetComponent<Collider>();
-            if (tipCollider == null)
+            get
             {
-                Debug.LogError($"No collider is found on {typeof(FollowPathObjectTip).Name} or its children on '{gameObject.name}'. A collider is needed for the component to work as intended. Please add one.");
-            }
-            else if (tipCollider.isTrigger == false)
-            {
-                Debug.LogError($"The collider on {typeof(FollowPathObjectTip).Name} or its children on '{gameObject.name}' is not set as a trigger. Please set 'Is Trigger' to true in the Inspector for the component to work as intended.");
+                return transform.position;
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        /// <summary>
+        /// The vector used to measure the path-following angles.
+        /// </summary>
+        public Vector3 TipRotation
         {
-            IFollowPathProperty followPathProperty = other.GetComponentInParent<IFollowPathProperty>();
-
-            if (followPathProperty != null && followPathProperty.Colliders.Contains(other) && followPathProperty.IsLocked == false)
+            get
             {
-                TouchedCuttableObject?.Invoke(this, new FollowPathObjectEventArgs(this, other));
-            }
-        }
-
-        public class FollowPathObjectEventArgs : EventArgs
-        {
-            public readonly IFollowPathObjectTip FollowPathObjectTip;
-            public readonly Collider OtherCollider;
-
-            public FollowPathObjectEventArgs(IFollowPathObjectTip followPathObjectTip, Collider otherCollider)
-            {
-                FollowPathObjectTip = followPathObjectTip;
-                OtherCollider = otherCollider;
+                return transform.eulerAngles;
             }
         }
     }

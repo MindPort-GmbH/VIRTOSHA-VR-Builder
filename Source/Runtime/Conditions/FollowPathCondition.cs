@@ -7,7 +7,6 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using UnityEngine.Scripting;
-using VRBuilder.BasicInteraction.Properties;
 using VRBuilder.Core;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Conditions;
@@ -33,7 +32,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
             /// </summary>
             [DataMember]
             [DisplayName("Follow Path Object")]
-            public SingleScenePropertyReference<IGrabbableProperty> FollowPathObject { get; set; }
+            public SingleScenePropertyReference<IFollowPathObjectProperty> FollowPathObject { get; set; }
 
             /// <summary>
             /// The path property to follow.
@@ -62,13 +61,25 @@ namespace VRBuilder.VIRTOSHA.Conditions
         {
             public ActiveProcess(EntityData data) : base(data)
             {
+
             }
 
             protected override bool CheckIfCompleted()
             {
                 // Check if path is fully followed.
                 IFollowPathProperty pathProperty = Data.FollowPath.Value;
-                return pathProperty != null && pathProperty.IsPathCompleted;
+                if (pathProperty != null && pathProperty.IsPathCompleted)
+                {
+                    return true;
+                }
+
+                IFollowPathObjectProperty followPathObjectProperty = Data.FollowPathObject.Value;
+                if (followPathObjectProperty != null && pathProperty != null)
+                {
+                    pathProperty.CurrentFollowPathObjectProperty = followPathObjectProperty;
+                }
+
+                return false;
             }
         }
 
@@ -91,7 +102,7 @@ namespace VRBuilder.VIRTOSHA.Conditions
         [JsonConstructor, Preserve]
         public FollowPathCondition()
         {
-            Data.FollowPathObject = new SingleScenePropertyReference<IGrabbableProperty>();
+            Data.FollowPathObject = new SingleScenePropertyReference<IFollowPathObjectProperty>();
             Data.FollowPath = new SingleScenePropertyReference<IFollowPathProperty>();
         }
 
