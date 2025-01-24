@@ -143,7 +143,7 @@ namespace VRBuilder.VIRTOSHA.Components
 
             if (currentDrilledObject != null)
             {
-                Vector3 drillEndPosition = drillStartPosition + drillDirection * currentDrillDepth;
+                Vector3 drillEndPosition = drillStartPosition + (drillDirection * currentDrillDepth);
 
                 currentDrilledObject.CreateHole(drillStartPosition, drillEndPosition, drillBit.Width);
 
@@ -183,7 +183,7 @@ namespace VRBuilder.VIRTOSHA.Components
                 return;
             }
 
-            Vector3 drillEndPosition = drillStartPosition + drillDirection * currentDrillDepth;
+            Vector3 drillEndPosition = drillStartPosition + (drillDirection * currentDrillDepth);
             DebugUtils.DrawWireCylinderGizmo(drillStartPosition, drillEndPosition, drillBit.Width, Color.red);
         }
 
@@ -192,7 +192,7 @@ namespace VRBuilder.VIRTOSHA.Components
             direction.Normalize();
             Vector3 originToCurrent = currentPosition - origin;
             projectionLength = Vector3.Dot(originToCurrent, direction);
-            Vector3 closestPointOnRay = origin + projectionLength * direction;
+            Vector3 closestPointOnRay = origin + (projectionLength * direction);
             float distance;
 
             if (projectionLength < 0)
