@@ -4,14 +4,12 @@
 # Explanations 
 # - https://mindport.atlassian.net/wiki/spaces/COMPANY/pages/edit-v2/384466945#QoDo-Free-%2F-Self-hosted
 # - https://qodo-merge-docs.qodo.ai/installation/github/#run-as-a-github-action
-# - https://qodo-merge-docs.qodo.ai/tools/ 
+# - https://qodo-merge-docs.qodo.ai/tools/
 
-
-name: Qodo Merge
 
 on:
-  pull_request:
-    types: [opened, reopened, ready_for_review]
+#  pull_request:
+#    types: [opened, reopened, ready_for_review]
   issue_comment:
 
 jobs:
@@ -22,7 +20,7 @@ jobs:
       issues: write
       pull-requests: write
       contents: write
-    name: Run pr agent on user comments
+    name: Run pr agent (Qodo Merge) on user comments
     steps:
       - name: PR Agent action step
         id: pragent
@@ -31,9 +29,6 @@ jobs:
           # Provide your OpenAI key and GitHub token as repository secrets
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          # Mirrors [config] section
-          CONFIG.DISABLE_AUTO_FEEDBACK: "true"
 
           # Mirrors [pr_reviewer] section
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "false"
