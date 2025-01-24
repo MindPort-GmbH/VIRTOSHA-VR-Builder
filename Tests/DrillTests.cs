@@ -69,7 +69,6 @@ namespace VRBuilder.VIRTOSHA.Tests
 
             GameObject.DestroyImmediate(drillObject);
             yield return null;
-
         }
     }
 }
