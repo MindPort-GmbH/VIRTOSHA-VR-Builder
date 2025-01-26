@@ -1,8 +1,9 @@
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Splines;
 using VRBuilder.Core.Properties;
-using Unity.Mathematics;
+using VRBuilder.VIRTOSHA.Components;
 
 namespace VRBuilder.VIRTOSHA.Properties
 {
@@ -86,6 +87,11 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <summary>
         /// Reference to the object/tip that is currently following this path.
         /// </summary>
+        public IFollowPathObjectTip FollowPathTip { get; private set; }
+
+        /// <summary>
+        /// For IFollowPathObjectProperty, if needed to store.
+        /// </summary>
         public IFollowPathObjectProperty CurrentFollowPathObjectProperty { get; set; }
 
         private float totalLength;
@@ -97,12 +103,23 @@ namespace VRBuilder.VIRTOSHA.Properties
                 splineContainer = GetComponent<SplineContainer>();
             }
 
-            // Example: compute total length of the first Spline in the container
             if (splineContainer.Splines.Count > 0)
             {
                 var spline = splineContainer.Splines[0];
-                totalLength = spline.GetLength(); // in your snippet: SplineUtility.GetLength(spline)
+                totalLength = spline.GetLength();
+                LogSplineDetails(spline);
             }
+        }
+
+        private void LogSplineDetails(Spline spline)
+        {
+            Debug.Log($"[FollowPathProperty] Spline Details:");
+            Debug.Log($"  - Total Length: {totalLength:F3}");
+            Debug.Log($"  - Knot Count: {spline.Count}");
+            float3 startPoint = spline.EvaluatePosition(0f);
+            float3 endPoint = spline.EvaluatePosition(1f);
+            Debug.Log($"  - Start Point (local): {startPoint}");
+            Debug.Log($"  - End Point (local): {endPoint}");
         }
 
         private void OnValidate()
@@ -124,88 +141,126 @@ namespace VRBuilder.VIRTOSHA.Properties
 
             if (pathCompleted >= 1f && IsPathCompleted == false)
             {
+                Debug.Log("[FollowPathProperty] Path completed, triggering completion event");
                 IsPathCompleted = true;
                 OnPathCompleted?.Invoke();
             }
         }
 
-        /// <summary>
-        /// The default EvaluateDeviations calls the helper once we have offset & tVal.
-        /// </summary>
         protected virtual void EvaluateDeviations()
         {
-            // Basic checks
-            if (CurrentFollowPathObjectProperty == null ||
-                CurrentFollowPathObjectProperty.FollowPathTip == null ||
-                splineContainer == null ||
-                splineContainer.Splines.Count == 0)
+            Debug.Log("[FollowPathProperty] Starting deviation evaluation");
+
+            if (!BasicChecks())
             {
                 return;
             }
 
             var spline = splineContainer.Splines[0];
-            Vector3 tipPos = CurrentFollowPathObjectProperty.FollowPathTip.TipPosition;
+            Vector3 tipPos = CurrentFollowPathObjectProperty.FollowPathTip.TipTransform.position;
+            Vector3 tipPosLocal = splineContainer.transform.InverseTransformPoint(tipPos);
+            Debug.Log($"[FollowPathProperty] Tip Position / Local: {tipPos} {tipPosLocal}");
 
-            float3 nearest;
+
+            // 1) Get local nearest point
+            float3 nearestLocal;
             float tVal;
-            SplineUtility.GetNearestPoint(spline, tipPos, out nearest, out tVal);
+            SplineUtility.GetNearestPoint(spline, tipPos, out nearestLocal, out tVal);
+            Debug.Log($"[FollowPathProperty] Nearest point on spline (local): {nearestLocal}, t-value: {tVal}");
 
-            Vector3 offset = tipPos - (Vector3)nearest;
+            // 2) Transform local to world
+            Matrix4x4 localToWorld = splineContainer.transform.localToWorldMatrix;
+            Vector3 nearestWorld = localToWorld.MultiplyPoint3x4((Vector3)nearestLocal);
+            Debug.Log($"[FollowPathProperty] Nearest point in world space: {nearestWorld}");
 
-            // Build local tangent frame
-            float3 tangentF3 = SplineUtility.EvaluateTangent(spline, tVal);
-            Vector3 tangent = ((Vector3)tangentF3).normalized;
+            // 3) Compute offset in world space
+            Vector3 offset = tipPos - nearestWorld;
+            Debug.Log($"[FollowPathProperty] Offset from spline: {offset}, magnitude: {offset.magnitude}");
+
+            // 4) Build local tangent frame in local space, then also transform to world.
+            float3 tangentLocal = math.normalize(SplineUtility.EvaluateTangent(spline, tVal));
+            // Transform direction with rotation (no position offset).
+            Vector3 tangentWorld = localToWorld.MultiplyVector((Vector3)tangentLocal).normalized;
+
             Vector3 crossRef = Vector3.up;
-            Vector3 binormal = Vector3.Cross(tangent, crossRef).normalized;
-            Vector3 normal = Vector3.Cross(binormal, tangent).normalized;
+            Vector3 binormal = Vector3.Cross(tangentWorld, crossRef).normalized;
+            Vector3 normal = Vector3.Cross(binormal, tangentWorld).normalized;
+            Debug.Log($"[FollowPathProperty] Local frame (world) - Tangent: {tangentWorld}, Normal: {normal}, Binormal: {binormal}");
 
-            // Then call the helper
-            EvaluateStandardDeviations(tVal, offset, normal, binormal, tangent);
+            EvaluateStandardDeviations(tVal, offset, normal, binormal, tangentWorld);
         }
 
-        /// <summary>
-        /// Contains the 'shared' logic for computing pathCompleted, checking left/right/up/down, angles, and triggering failure.
-        /// Subclasses can call this whenever they want.
-        /// </summary>
+        protected bool BasicChecks()
+        {
+            bool result = CurrentFollowPathObjectProperty != null &&
+                          CurrentFollowPathObjectProperty.FollowPathTip != null &&
+                          splineContainer != null &&
+                          splineContainer.Splines.Count > 0;
+            return result;
+        }
+
         protected void EvaluateStandardDeviations(float tVal, Vector3 offset, Vector3 normal, Vector3 binormal, Vector3 tangent)
         {
-            // 1) Update pathCompleted
+            Debug.Log("[FollowPathProperty] Starting standard deviation evaluation");
+
             float distanceAlongSpline = tVal * totalLength;
             pathCompleted = Mathf.Clamp01(distanceAlongSpline / totalLength);
+            Debug.Log($"[FollowPathProperty] Path completion: {pathCompleted:F2} (distance: {distanceAlongSpline:F2})");
 
-            // 2) Deviation checks
             float offsetUpDown = Vector3.Dot(offset, normal);
             float offsetLeftRight = Vector3.Dot(offset, binormal);
+            Debug.Log($"[FollowPathProperty] Deviations - Up/Down: {offsetUpDown:F3}, Left/Right: {offsetLeftRight:F3}");
+
             bool fail = false;
 
-            // up/down
+            // Up/down checks
             if (offsetUpDown > maxDeviationUp && failConditionUp)
+            {
+                Debug.Log($"[FollowPathProperty] Failed: Exceeded max up deviation ({offsetUpDown:F3} > {maxDeviationUp})");
                 fail = true;
+            }
             else if (offsetUpDown < -maxDeviationDown && failConditionDown)
+            {
+                Debug.Log($"[FollowPathProperty] Failed: Exceeded max down deviation ({offsetUpDown:F3} < -{maxDeviationDown})");
                 fail = true;
+            }
 
-            // left/right
+            // Left/right checks
             if (offsetLeftRight > maxDeviationLeft && failConditionLeft)
+            {
+                Debug.Log($"[FollowPathProperty] Failed: Exceeded max left deviation ({offsetLeftRight:F3} > {maxDeviationLeft})");
                 fail = true;
+            }
             else if (offsetLeftRight < -maxDeviationRight && failConditionRight)
+            {
+                Debug.Log($"[FollowPathProperty] Failed: Exceeded max right deviation ({offsetLeftRight:F3} < -{maxDeviationRight})");
                 fail = true;
+            }
 
             // angles
             if (!ignorePitchAndRoll)
             {
-                Vector3 tipForward = CurrentFollowPathObjectProperty.FollowPathTip.TipRotation.normalized;
+                Vector3 tipForward = CurrentFollowPathObjectProperty.FollowPathTip.TipTransform.forward;
                 float currentRoll = SignedRollAngle(tipForward, tangent, normal);
-                if (Mathf.Abs(currentRoll - targetAngleRoll) > maxAngleDeviationRoll && failConditionRoll)
-                    fail = true;
-
                 float currentPitch = SignedPitchAngle(tipForward, tangent, normal);
-                if (Mathf.Abs(currentPitch - targetAnglePitch) > maxAngleDeviationPitch && failConditionPitch)
+                Debug.Log($"[FollowPathProperty] Current angles - Roll: {currentRoll:F1}°, Pitch: {currentPitch:F1}°");
+
+                if (Mathf.Abs(currentRoll - targetAngleRoll) > maxAngleDeviationRoll && failConditionRoll)
+                {
+                    Debug.Log($"[FollowPathProperty] Failed: Exceeded max roll deviation (current: {currentRoll:F1}°, target: {targetAngleRoll}° ±{maxAngleDeviationRoll}°)");
                     fail = true;
+                }
+
+                if (Mathf.Abs(currentPitch - targetAnglePitch) > maxAngleDeviationPitch && failConditionPitch)
+                {
+                    Debug.Log($"[FollowPathProperty] Failed: Exceeded max pitch deviation (current: {currentPitch:F1}°, target: {targetAnglePitch}° ±{maxAngleDeviationPitch}°)");
+                    fail = true;
+                }
             }
 
-            // 3) If any fail, handle reset and event
             if (fail)
             {
+                Debug.Log("[FollowPathProperty] Failure detected, handling reset and event");
                 if (resetPathCompletedOnDeviation)
                 {
                     pathCompleted = 0f;
@@ -215,29 +270,18 @@ namespace VRBuilder.VIRTOSHA.Properties
             }
         }
 
-        /// <summary>
-        /// Example method measuring roll about 'tangent' axis.
-        /// </summary>
         private float SignedRollAngle(Vector3 tipForward, Vector3 pathForward, Vector3 pathUp)
         {
-            // Compute rotation from pathForward to tipForward
             Quaternion fromTo = Quaternion.FromToRotation(pathForward, tipForward);
-
-            // "Roll" is how much pathUp rotates about pathForward
             Vector3 newUp = fromTo * pathUp;
             float angle = Vector3.SignedAngle(pathUp, newUp, pathForward);
             return angle;
         }
 
-        /// <summary>
-        /// Example method measuring pitch in plane of pathForward & pathUp.
-        /// </summary>
         private float SignedPitchAngle(Vector3 tipForward, Vector3 pathForward, Vector3 pathUp)
         {
-            // Project tipForward into plane spanned by pathForward & pathUp
             Vector3 sideAxis = Vector3.Cross(pathForward, pathUp);
             Vector3 forwardProj = Vector3.ProjectOnPlane(tipForward, sideAxis);
-
             float angle = Vector3.SignedAngle(pathForward, forwardProj, sideAxis);
             return angle;
         }

@@ -3,30 +3,17 @@ using UnityEngine;
 namespace VRBuilder.VIRTOSHA.Components
 {
     /// <summary>
-    /// Component that implements IFollowPathObjectTip to provide position and rotation vectors 
+    /// Component that implements IFollowPathObjectTip to provide Transform 
     /// for measuring path-following.
     /// </summary>
     public class FollowPathObjectTip : MonoBehaviour, IFollowPathObjectTip
     {
-        /// <summary>
-        /// The vector used to measure the path-following position.
-        /// </summary>
-        public Vector3 TipPosition
+        /// <inheritdoc />
+        public Transform TipTransform
         {
             get
             {
-                return transform.position;
-            }
-        }
-
-        /// <summary>
-        /// The vector used to measure the path-following angles.
-        /// </summary>
-        public Vector3 TipRotation
-        {
-            get
-            {
-                return transform.eulerAngles;
+                return transform;
             }
         }
     }

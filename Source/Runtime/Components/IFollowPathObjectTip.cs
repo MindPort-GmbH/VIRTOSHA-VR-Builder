@@ -8,12 +8,8 @@ namespace VRBuilder.VIRTOSHA.Components
   public interface IFollowPathObjectTip
   {
     /// <summary>
-    /// The vector used to measure the path-following position.
+    /// The Transform of the tip object, used to measure the path-following position and rotation.
     /// </summary>
-    Vector3 TipPosition { get; }
-    /// <summary>
-    /// The vector used to measure the path-following angles.
-    /// </summary>
-    Vector3 TipRotation { get; }
+    Transform TipTransform { get; }
   }
 }

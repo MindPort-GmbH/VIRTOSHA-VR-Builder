@@ -17,13 +17,7 @@ namespace VRBuilder.VIRTOSHA.Properties
         /// <summary>
         /// The tip that will be used to measure path deviation.
         /// </summary>
-        public IFollowPathObjectTip FollowPathTip
-        {
-            get
-            {
-                return followPathObjectTip as IFollowPathObjectTip;
-            }
-        }
+        public IFollowPathObjectTip FollowPathTip => followPathObjectTip;
 
         private void OnValidate()
         {
